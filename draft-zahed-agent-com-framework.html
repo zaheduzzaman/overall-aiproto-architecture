@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>AI Agent Interoperable Protocol Framework (AIPF)</title>
+<meta content="Zaheduzzaman Sarker" name="author">
+<meta content="Tirumaleswar Reddy" name="author">
+<meta content="Kehan Yao" name="author">
+<meta content="Dapeng Liu" name="author">
+<meta content="Suresh Krishnan" name="author">
+<meta content="
+       The current generation of AI agent communication protocols enables basic tool
+access and inter-agent messaging, but lacks the architectural and protocol
+foundations required for open, interoperable, and resilient Internet-scale
+deployments. This document presents the AI Agent Interoperable Protocol Framework
+(AIPF), a layered framework that identifies the key building blocks and the
+protocol suite required for interoperable Agent-to-agent/Agent-to-tool
+communication. 
+    " name="description">
+<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="Internet-Draft" name="keyword">
+<meta content="draft-zahed-agent-comm-framework-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.34.0
+    Python 3.14.7
+    ConfigArgParse 1.7.5
+    google-i18n-address 3.1.1
+    intervaltree 3.2.1
+    Jinja2 3.1.6
+    lxml 6.1.1
+    natsort 8.4.0
+    platformdirs 4.11.5
+    pycountry 24.6.1
+    PyYAML 6.0.3
+    requests 2.33.1
+    wcwidth 0.8.2
+-->
+<link href="draft-zahed-agent-com-framework.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1 {
+  &#title {
+    font-size: 32px;
+    line-height: 40px;
+    clear: both;
+    margin: 1.5em 0 0.2em;
+  }
+  &#rfcnum {
+    margin: 1.5em 0 0.2em;
+    & + h1#title {
+      margin: 0.2em 0;
+    }
+  }
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+  & code, & samp, & tt {
+    font-size: 16px;
+    line-height: 0;
+  }
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    margin: 0;
+    float: right;
+    clear: both;
+  }
+  & > *:nth-child(2) {
+    clear: both;
+    display: block;
+    border: none;
+  }
+}
+svg {
+  display: block;
+  /* font-family isn't space-separated, but =~ will have to do */
+  &[font-family~="monospace" i], & [font-family~="monospace" i] {
+    font-family: var(--font-mono);
+  }
+}
+.alignCenter {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+       support flexbox yet.
+    */
+    display: table;
+    margin: 0 auto;
+  }
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+      float: none;
+    }
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+
+  &:not(.dlNewline) > dt {
+    float: left;
+    margin-right: 2ch;
+    min-width: 8ch;
+  }
+  & > dd {
+    margin-bottom: .8em;
+    margin-left: var(--indent) !important; /* stupid element overrides */
+    min-height: 2ex;
+  }
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a {
+  text-decoration: none;
+  &[href] {
+    color: var(--link-color);
+    &:hover { text-decoration: underline; }
+    &.selfRef {
+      color: var(--text-color);
+      &:hover {
+        text-decoration: none;
+        background-color: var(--highlight-color);
+      }
+    }
+  }
+}
+.iref + a[href].internal {
+  color: var(--text-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+  & blockquote {
+    margin: 0.8em 0.4em 0.4em;
+  }
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) {
+    & p {
+      margin: -2px 0;
+      max-height: 0;
+      transition: max-height 2s ease, margin 0.5s ease 0.5s;
+      overflow: hidden;
+    }
+    &:hover p,
+    & h2:target ~ p {
+      margin: 0.5em 0;
+      max-height: 500px;
+      overflow: auto;
+    }
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+  border-left: 2px var(--pilcrow-strong) solid;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  &.right { margin-left: auto; }
+  &.center { margin-left: auto; margin-right: auto; }
+  &.left { margin-right: auto; }
+  & .text-left { text-align: left; }
+  & .text-center { text-align: center; }
+  & .text-right { text-align: right; }
+  & caption {
+    margin: 0;
+    padding: 3px 0 3px 1em;
+  }
+  & p { margin: 0; }
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+  @media not print {
+    :hover > &, &:focus {
+      opacity: 1;
+    }
+    &[href]:hover {
+      color: var(--pilcrow-strong);
+      background-color: transparent;
+    }
+  }
+  @media print {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+  & .prepared {
+    float: right;
+  }
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses {
+    & > section {
+      column-count: 2;
+      column-gap: 20px;
+    }
+    & > section > h2 {
+      column-span: all;
+    }
+    /* hack for break-inside: avoid-column */
+    & address {
+      display: inline-block;
+      break-inside: avoid-column;
+    }
+  }
+}
+
+/* Comments */
+.rfcEditorRemove {
+  & p:first-of-type {
+    font-style: italic;
+  }
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc {
+    & nav {
+      font-family: var(--font-title);
+      font-weight: 360;
+      & > ul { margin-bottom: 2em; }
+      & ul {
+        margin: 0 0 0 4px;
+        & :is(p, li) {
+          margin: 2px 0;
+        }
+      }
+    }
+    & a.toplink {
+      float: right;
+    }
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+    & h2 {
+      margin: 0;
+      padding: 2px 0 2px 6px;
+      padding-right: 1em;
+      font-size: 18px;
+      line-height: 24px;
+      min-width: 190px;
+      text-align: right;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      &::before { /* css hamburger */
+        float: right;
+        position: relative;
+        width: 1em;
+        height: 1px;
+        left: -164px;
+        margin: 8px 0 0 0;
+        background: white none repeat scroll 0 0;
+        box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+        content: "";
+      }
+    }
+    & nav {
+      display: none;
+      background-color: var(--background-color);
+      padding: 0.5em 1em 1em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      height: calc(100vh - 48px);
+      border-left: 1px solid #ddd;
+    }
+    &.active {
+      opacity: 1;
+      & nav { display: block; }
+    }
+    /* Make the collapsed ToC header render white on gray also when it's a link */
+    & h2 a,
+    & h2 a:is(:link, :focus, :hover),
+    & a.toplink,
+    & a.toplink:hover {
+      color: white;
+      background-color: #444;
+      text-decoration: none;
+    }
+    & a.toplink {
+      margin: 2px 0.5em 0;
+    }
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    & h2 {
+      margin: 0;
+      padding: 0.25em 1em 1em 0;
+    }
+    & nav {
+      display: block;
+      height: calc(90vh - 84px);
+      bottom: 0;
+      padding: 0.5em 0 2em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+    & a.toplink {
+      margin: 8px 0.5em 0;
+    }
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc {
+    page-break-before: always;
+    border-top: none;
+    padding-top: 0;
+  }
+  #n-introduction {
+    page-break-before: always;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg {
+  & :is([stroke="black"], [stroke^="#000"]) {
+    stroke: var(--text-color);
+  }
+  & :is([stroke="white"], [stroke^="#fff"]) {
+    stroke: var(--background-color);
+  }
+  & :is([fill="black"], [fill^="#000"], :not([fill])) {
+    fill: var(--text-color);
+  }
+  & :is([fill="white"], [fill^="#fff"]) {
+    fill: var(--background-color);
+  }
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">AIPF</td>
+<td class="right">August 2026</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Sarker, et al.</td>
+<td class="center">Expires 4 March 2027</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">individual submission</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-zahed-agent-comm-framework-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2026-08-31" class="published">31 August 2026</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2027-03-04">4 March 2027</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">Z. Sarker</div>
+<div class="org">Nokia</div>
+</div>
+<div class="author">
+      <div class="author-name">T. Reddy</div>
+<div class="org">Nokia</div>
+</div>
+<div class="author">
+      <div class="author-name">K. Yao</div>
+<div class="org">China Mobile</div>
+</div>
+<div class="author">
+      <div class="author-name">D. Liu</div>
+<div class="org">Alibaba Cloud</div>
+</div>
+<div class="author">
+      <div class="author-name">S. Krishnan</div>
+<div class="org">Cisco</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">AI Agent Interoperable Protocol Framework (AIPF)</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">The current generation of AI agent communication protocols enables basic tool
+access and inter-agent messaging, but lacks the architectural and protocol
+foundations required for open, interoperable, and resilient Internet-scale
+deployments. This document presents the AI Agent Interoperable Protocol Framework
+(AIPF), a layered framework that identifies the key building blocks and the
+protocol suite required for interoperable Agent-to-agent/Agent-to-tool
+communication.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 4 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-current-protocol-landscape" class="internal xref">Current Protocol Landscape</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-framework-scope" class="internal xref">Framework Scope</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-design-philosophy" class="internal xref">Design Philosophy</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-framework-composition" class="internal xref">Framework Composition</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-operational-flow" class="internal xref">Operational Flow</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-framework-overview" class="internal xref">Framework Overview</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-discovery-aspects" class="internal xref">Discovery Aspects</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-security-aspects" class="internal xref">Security Aspects</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-agent-identity" class="internal xref">Agent Identity</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-channel-protection" class="internal xref">Channel Protection</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
+                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-intent-execution-separation" class="internal xref">Intent-Execution Separation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4">
+                <p id="section-toc.1-1.8.2.4.1"><a href="#section-8.4" class="auto internal xref">8.4</a>.  <a href="#name-delegation-chain-integrity" class="internal xref">Delegation Chain Integrity</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5">
+                <p id="section-toc.1-1.8.2.5.1"><a href="#section-8.5" class="auto internal xref">8.5</a>.  <a href="#name-audit-and-non-repudiation" class="internal xref">Audit and Non-Repudiation</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-transport-protocols-aspects" class="internal xref">Transport protocols Aspects</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-delivery-semantics" class="internal xref">Delivery Semantics</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-message-exchange-patterns" class="internal xref">Message Exchange Patterns</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
+                <p id="section-toc.1-1.9.2.3.1"><a href="#section-9.3" class="auto internal xref">9.3</a>.  <a href="#name-priority-and-scheduling" class="internal xref">Priority and Scheduling</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4">
+                <p id="section-toc.1-1.9.2.4.1"><a href="#section-9.4" class="auto internal xref">9.4</a>.  <a href="#name-multimodal-negotiation" class="internal xref">Multimodal Negotiation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.5">
+                <p id="section-toc.1-1.9.2.5.1"><a href="#section-9.5" class="auto internal xref">9.5</a>.  <a href="#name-structured-error-and-progre" class="internal xref">Structured Error and Progress Signaling</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6">
+                <p id="section-toc.1-1.9.2.6.1"><a href="#section-9.6" class="auto internal xref">9.6</a>.  <a href="#name-cancellation-and-interrupti" class="internal xref">Cancellation and Interruption</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.7">
+                <p id="section-toc.1-1.9.2.7.1"><a href="#section-9.7" class="auto internal xref">9.7</a>.  <a href="#name-multiple-communication-topo" class="internal xref">Multiple Communication topologies</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-session-continuity" class="internal xref">Session Continuity</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-applicability-of-existing-i" class="internal xref">Applicability of Existing IETF Work</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-profile-or-extend" class="internal xref">Profile or Extend</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-new-protocol-work" class="internal xref">New Protocol Work</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#section-14" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
+            <p id="section-toc.1-1.15.1"><a href="#section-15" class="auto internal xref"></a><a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.1">
+                <p id="section-toc.1-1.15.2.1.1"><a href="#section-15.1" class="auto internal xref"></a><a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.2">
+                <p id="section-toc.1-1.15.2.2.1"><a href="#section-15.2" class="auto internal xref"></a><a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16">
+            <p id="section-toc.1-1.16.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="intro">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">The emergence of autonomous AI agents that communicate, collaborate, and
+delegate tasks across the Internet introduces a new class of networked
+entity with requirements that existing protocol frameworks were not designed
+to address. A number of drafts have identified a cluster of open problems for
+which the IETF has a responsibility to provide standards-based solutions:
+inter-domain agent discovery, fine-grained delegated authorization across
+domain boundaries, multi-modal low-latency transport with session continuity,
+and secure transfer of accumulated task context across agent lifetimes.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This document specifies the AI Agent Interoperable Protocol Framework
+(AIPF), an architectural framework. AIPF addresses the complete lifecycle of an
+inter-domain AI agent-to-agent and agent-to-tools interaction: how agents 
+advertise capabilities and discover peers (the Discovery module), how 
+agents establish verifiable identities, authenticate to each other, and 
+authorize delegation chains (the Security module), and how agents establish
+low-latency multi-modal communication sessions that survive network 
+interruptions and agent migrations (the Transport Sessions module). 
+The protocol requirements that AIPF is designed to satisfy are defined in <span>[<a href="#I-D.agentic-ai-usecases-requirements" class="cite xref">I-D.agentic-ai-usecases-requirements</a>]</span>. This document specifies the architectural framework and building blocks necessary to satisfy those requirements, and identifies applicable existing IETF protocols and areas requiring new protocol work. This document serves both as an architectural reference and as input to the IETF standardization effort for AI agent communication protocols.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">MCP <span>[<a href="#MCP" class="cite xref">MCP</a>]</span> and A2A <span>[<a href="#A2A" class="cite xref">A2A</a>]</span> are application-layer protocols that are built on top of IETF standards, including HTTP, JSON, OAuth 2.0, and TLS, for their transport and security foundations. These protocols are intended to be complementary rather than competing: MCP focuses on interactions between an agent and its tools, while A2A focuses on horizontal agent-to-agent communication. While both of these protocols are open-source and are broadly adopted, they do not define the infrastructure-level building blocks such as cross-domain discovery, cryptographically verifiable delegation chains, session continuity, and multi-modal transport semantics that Internet-scale agent deployments require. This document analyzes these gaps and identifies existing IETF protocols that are suitable for use, as well as identifying new IETF protocol work that is needed.<a href="#section-1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="conventions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
+and "OPTIONAL" in this document are to be interpreted as described in
+BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they appear in all
+capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="landscape">
+<section id="section-3">
+      <h2 id="name-current-protocol-landscape">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-current-protocol-landscape" class="section-name selfRef">Current Protocol Landscape</a>
+      </h2>
+<p id="section-3-1">Several industry-developed protocols address subsets of the agent
+communication problem:<a href="#section-3-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-3-2">
+        <dt id="section-3-2.1">Model Context Protocol (MCP) <span>[<a href="#MCP" class="cite xref">MCP</a>]</span>:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.2">
+          <p id="section-3-2.2.1">MCP defines a standardized interface for AI agents to access tools,
+resources, and APIs. It is primarily an agent-to-tool (A2T) protocol
+operating within a single administrative domain, with manual
+pre-configuration of tool endpoints. MCP does not define agent
+discovery, cross-domain authentication, or session resumption.<a href="#section-3-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.3">Agent2Agent Protocol (A2A) <span>[<a href="#A2A" class="cite xref">A2A</a>]</span>:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.4">
+          <p id="section-3-2.4.1">A2A defines agent-to-agent communication using HTTP and Server-Sent
+Events (SSE). It introduces the "Agent Card" for capability advertisement
+and a "Task" object for session state. A2A's discovery depends on
+knowledge of the target agent's URL and does not define cross-domain
+federation. Session resumption after network disconnection is
+implementation-specific. Authorization uses OAuth 2.0 scopes without
+a defined delegation chain model.<a href="#section-3-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-3-2.5">Agent Communication Protocol (ACP) <span>[<a href="#ACP" class="cite xref">ACP</a>]</span>:</dt>
+        <dd style="margin-left: 1.5em" id="section-3-2.6">
+          <p id="section-3-2.6.1">ACP uses REST/HTTP for local, synchronous and asynchronous agent
+communication. It does not define Internet-scale discovery or
+cross-domain security.<a href="#section-3-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+<p id="section-3-3">As documented in <span>[<a href="#I-D.yao-catalist-problem-space" class="cite xref">I-D.yao-catalist-problem-space</a>]</span>, the specific gaps
+that the IETF should address are:<a href="#section-3-3" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3-4">
+<li id="section-3-4.1">
+          <p id="section-3-4.1.1">No standardized mechanism for resolving agent identifiers to network
+locations across domains.<a href="#section-3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-3-4.2">
+          <p id="section-3-4.2.1">No standardized cross-domain directory or federation mechanism for
+capability-based agent discovery.<a href="#section-3-4.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-3-4.3">
+          <p id="section-3-4.3.1">No defined delegation chain model for multi-hop cross-domain
+agent authorization with cryptographic verifiability and fine
+grained authorization.<a href="#section-3-4.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-3-4.4">
+          <p id="section-3-4.4.1">No session state management with explicit resumption, timeout, and
+migration semantics.<a href="#section-3-4.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-3-4.5">
+          <p id="section-3-4.5.1">No multi-modal transport with per-stream reliability, ordering, and
+latency semantics appropriate for real-time audio and video alongside
+bulk data.<a href="#section-3-4.5.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-3-4.6">
+          <p id="section-3-4.6.1">No standardized agent context document format or protocol for secure
+context transfer during agent migration.<a href="#section-3-4.6.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+</section>
+</div>
+<div id="problem">
+<section id="section-4">
+      <h2 id="name-framework-scope">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-framework-scope" class="section-name selfRef">Framework Scope</a>
+      </h2>
+<p id="section-4-1">The use cases and protocol requirements that motivate this framework are
+defined in <span>[<a href="#I-D.agentic-ai-usecases-requirements" class="cite xref">I-D.agentic-ai-usecases-requirements</a>]</span>. This document takes
+those requirements as input and specifies the architectural framework and
+building blocks necessary to satisfy them.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">The gaps enumerated in <a href="#landscape" class="auto internal xref">Section 3</a> fall into four areas, each addressed by
+a separate section in the document:<a href="#section-4-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4-3.1">
+          <p id="section-4-3.1.1">Inter-domain discovery and capability advertisement (<a href="#discovery" class="auto internal xref">Section 7</a>)<a href="#section-4-3.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-4-3.2">
+          <p id="section-4-3.2.1">Verifiable identity, authorization, and delegation (<a href="#security" class="auto internal xref">Section 8</a>)<a href="#section-4-3.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-4-3.3">
+          <p id="section-4-3.3.1">Heterogeneous, multi-modal transport (<a href="#transport" class="auto internal xref">Section 9</a>)<a href="#section-4-3.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-4-3.4">
+          <p id="section-4-3.4.1">Long-lived session continuity (<a href="#sessioncont" class="auto internal xref">Section 10</a>)<a href="#section-4-3.4.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-4-4">Without standards-based solutions, long-running and cross-domain agent
+workflows cannot interoperate.<a href="#section-4-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="philosophy">
+<section id="section-5">
+      <h2 id="name-design-philosophy">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-design-philosophy" class="section-name selfRef">Design Philosophy</a>
+      </h2>
+<p id="section-5-1">AIPF is designed around four commitments that should be taken into account in
+all companion protocol specifications:<a href="#section-5-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-5-2">
+        <dt id="section-5-2.1">Maximize reuse of existing IETF standards:</dt>
+        <dd style="margin-left: 1.5em" id="section-5-2.2">
+          <p id="section-5-2.2.1">New protocol work is warranted only when existing mechanisms cannot
+satisfy agent communication requirements without violating their
+specification or breaking backward compatibility. The analysis in
+this document shows that the majority of AIPF can be realized by
+composing, extending, or profiling existing IETF protocols.<a href="#section-5-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-5-2.3">End-to-end security as a baseline, not an option:</dt>
+        <dd style="margin-left: 1.5em" id="section-5-2.4">
+          <p id="section-5-2.4.1">Every AIPF interaction MUST be authenticated, encrypted, and
+authorized. There is no defined fallback to cleartext or unauthenticated
+operation. This is not a "security layer" applied on top; it is built
+into the connection establishment procedure itself.<a href="#section-5-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-5-2.5">Session-oriented, not request-response-oriented:</dt>
+        <dd style="margin-left: 1.5em" id="section-5-2.6">
+          <p id="section-5-2.6.1">Agent communication is inherently long-lived and stateful. Every
+protocol element is designed with the assumption that the task
+context outlives any individual transport connection and is carried
+across connection changes.<a href="#section-5-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+<dt id="section-5-2.7">Composability and incremental deployment:</dt>
+        <dd style="margin-left: 1.5em" id="section-5-2.8">
+          <p id="section-5-2.8.1">A minimal AIPF deployment (two agents, same domain, bilateral session,
+text-only modality) must interoperate with a full deployment (N agents,
+cross-domain, multi-party group key, multi-modal streams, session
+migration). Protocol elements that are not needed in a given interaction
+can be negotiated away, and are not required.<a href="#section-5-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+      <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="composition">
+<section id="section-6">
+      <h2 id="name-framework-composition">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-framework-composition" class="section-name selfRef">Framework Composition</a>
+      </h2>
+<ul class="normal">
+<li class="normal" id="section-6-1.1">
+          <p id="section-6-1.1.1">Discovery establishes trust anchors.<a href="#section-6-1.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-6-1.2">
+          <p id="section-6-1.2.1">Security binds identity and authorization.<a href="#section-6-1.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-6-1.3">
+          <p id="section-6-1.3.1">Transport provides multiplexed streams.<a href="#section-6-1.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-6-1.4">
+          <p id="section-6-1.4.1">Sessions bind execution continuity.<a href="#section-6-1.4.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-6-2">AIPF defines a vocabulary and interaction model ensuring these layers evolve
+coherently.<a href="#section-6-2" class="pilcrow">¶</a></p>
+<div id="opflow">
+<section id="section-6.1">
+        <h3 id="name-operational-flow">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-operational-flow" class="section-name selfRef">Operational Flow</a>
+        </h3>
+<p id="section-6.1-1">The use case for orchestrator-driven agent collaboration, including task delegation, result reporting, and session continuity, is described in Section 4.2 of <span>[<a href="#I-D.agentic-ai-usecases-requirements" class="cite xref">I-D.agentic-ai-usecases-requirements</a>]</span>. The operational flow for a complete interaction within this use case proceeds as follows:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6.1-2">
+<li id="section-6.1-2.1">
+            <p id="section-6.1-2.1.1"><strong>Task Initiation</strong>: A user provides a goal to e.g. an Orchestrator Agent.<a href="#section-6.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.1-2.2">
+            <p id="section-6.1-2.2.1"><strong>Agent Selection</strong>: The Orchestrator Agent uses discovery protocols to discover
+candidate Sub-agents that have the capabilities required for sub-tasks.<a href="#section-6.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.1-2.3">
+            <p id="section-6.1-2.3.1"><strong>Identity Establishment</strong>: Before connecting, the Orchestrator Agent obtains verifiable credentials for itself and verifies the identity of the target Sub-agent.<a href="#section-6.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.1-2.4">
+            <p id="section-6.1-2.4.1"><strong>Authorization</strong>: The Orchestrator Agent obtains an OAuth 2.0 delegation token scoped to the sub-task, derived from the original user authorization.<a href="#section-6.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.1-2.5">
+            <p id="section-6.1-2.5.1"><strong>Connection Establishment</strong>: The Orchestrator Agent initiates transport layer
+protocol connection ( e.g a QUIC connection ) to the Sub-agent endpoint.
+TLS 1.3 cryptographic layer (<span>[<a href="#RFC9001" class="cite xref">RFC9001</a>]</span>) or MLS group key agreement (<span>[<a href="#RFC9420" class="cite xref">RFC9420</a>]</span>, <span>[<a href="#RFC9750" class="cite xref">RFC9750</a>]</span>) is established
+for multi-party sessions as part of this connection establishment phase.<a href="#section-6.1-2.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.1-2.6">
+            <p id="section-6.1-2.6.1"><strong>Session Creation</strong>: Over the established transport protocol connection, the Orchestrator
+Agent creates an Agent Session, negotiating modalities, stream
+types, and session parameters.<a href="#section-6.1-2.6.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.1-2.7">
+            <p id="section-6.1-2.7.1"><strong>Task Execution</strong>: The agents exchange messages using application-layer
+protocols (e.g., MCP, A2A) and Multi-modal data
+(text, audio, video) is carried over the transport layer protocol with appropriate
+priority and reliability settings.<a href="#section-6.1-2.7.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.1-2.8">
+            <p id="section-6.1-2.8.1"><strong>Session Resumption or Migration</strong>: If the underlying transport layer connection is
+interrupted, the session could be resumed a pre-shared session ticket (e.g., QUIC session
+resumption) when the connection is recovered. If the Sub-agent migrates to a new compute
+node, and session will be created. In that case, the application need to retain the session
+information to be reused in the new connection.<a href="#section-6.1-2.8.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-6.1-2.9">
+            <p id="section-6.1-2.9.1"><strong>Task Completion</strong>: The Orchestrator Agent receives results from Sub-agents,
+synthesizes the final response, and delivers it to the user. Sessions are
+gracefully terminated.<a href="#section-6.1-2.9.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+</section>
+</div>
+<div id="framework">
+<section id="section-6.2">
+        <h3 id="name-framework-overview">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-framework-overview" class="section-name selfRef">Framework Overview</a>
+        </h3>
+<p id="section-6.2-1">TODO: describe each of the blocks in details.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-2">AIPF is organized as a layered protocol stack. Each layer provides guarantees that the layer above depends on. The stack is shared by both communicating agents, with agent-to-agent interaction occurring at the agent layer and the protocol layers beneath providing the necessary security, authorization, session, and transport foundations.<a href="#section-6.2-2" class="pilcrow">¶</a></p>
+<span id="name-reference-architecture"></span><div id="fig-arch">
+<figure id="figure-1">
+          <div class="alignLeft art-text artwork" id="section-6.2-3.1">
+<pre>
++--------------------+                      +-------------------+
+|      User / App    |                      |    User / App     |
++---------+----------+                      +----------+--------+
+          |                                            |
+          v                                            v
++-----------------+     +-----------------+      +---------------+
+|     Agent (A)   |&lt;---&gt;|    Discovery    |&lt;---&gt; |   Agent (B)   |
++---------+-------+     +-----------------+      +-------+-------+
+          |                                              |
+          +----------------------+-----------------------+
+                                 |
+                                 v
++---------------------------------------------------------------+
+|                          Context                              |
+|  - Context Identifier                                         |
+|  - Context Integrity Digest                                   |
++---------------------------------------------------------------+
+                                 |
+                                 v
++---------------------------------------------------------------+
+|             Authorization and Delegation                      |
+|  - Protocol : AUTH2.0                                         |
++---------------------------------------------------------------+
+                                 |
+                                 v
++---------------------------------------------------------------+
+|                Identity Management                            |
+|  - Workload Identity Tokens (WIT)                             |
+|  - WIMSE Proof Tokens (WPT)                                   |
++---------------------------------------------------------------+
+                                 |
+                                 v
++---------------------------------------------------------------+
+|                          Transport                            |
+|  - Multiplexed Streams                                        |
+|  - Per-stream Semantics                                       |
+|  - Connection continuity (Connection ID, TLS resumption)      |
+|  - Protocol : QUIC, MoQT                                      |
++---------------------------------------------------------------+
+                                 |
+                                 v
++---------------------------------------------------------------+
+|                       Security                                |
+|  - Channel Protection                                         |
+|  - Mutual Authentication                                      |
+|  - Protocol: TLS 1.3                                          |
++---------------------------------------------------------------+
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-reference-architecture" class="selfRef">Reference architecture</a>
+          </figcaption></figure>
+</div>
+<p id="section-6.2-4">TLS 1.3 provides channel protection and mutual authentication for all agent communication. When agents communicate directly over QUIC, TLS 1.3 is integrated into the QUIC handshake <span>[<a href="#RFC9001" class="cite xref">RFC9001</a>]</span> and does not occupy a discrete layer above or below the transport. In architectures involving intermediaries where TLS is terminated at a proxy, application-layer authentication is required to maintain identity continuity across TLS termination points, as described in <a href="#channel-protection" class="auto internal xref">Section 8.2</a>.<a href="#section-6.2-4" class="pilcrow">¶</a></p>
+<p id="section-6.2-5">QUIC provides multiplexed streams with per-stream semantics suitable for the heterogeneous communication patterns of agent interactions. MoQT (Media over QUIC Transport) adds a publish/subscribe layer over QUIC for the one-to-many and many-to-many group communication that point-to-point QUIC streams cannot provide.<a href="#section-6.2-5" class="pilcrow">¶</a></p>
+<p id="section-6.2-6">OAuth 2.0 provides the authorization and delegation framework, enabling agents to obtain and present access tokens scoped to specific tasks. WIMSE provides workload identity for agents through a URI embedded in X.509 certificates at the TLS layer, and through Workload Identity Tokens (WIT) and WIMSE Proof Tokens (WPT) at the application layer. The Agent Session Protocol (ASP) maintains context continuity, a stable context identifier and integrity verification across connection changes, including endpoint migration. Connection-level continuity is provided by QUIC Connection ID and TLS resumption. Agents interact at the top of the stack, each acting on behalf of a user or system.<a href="#section-6.2-6" class="pilcrow">¶</a></p>
+<p id="section-6.2-7">Attestation, as being defined in the SEAT WG, introduces mechanisms to bind attestation evidence to agent communications. The evidence may be carried during the TLS handshake or at the application layer. Attestation is not represented as a discrete layer in the diagram because it does not occupy a single position in the stack. Depending on the approach, attestation evidence may be conveyed during the TLS handshake or conveyed at the application layer by extending <span>[<a href="#RFC9261" class="cite xref">RFC9261</a>]</span>. Its placement in the stack is therefore solution-specific and outside the scope of this framework document.<a href="#section-6.2-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="discovery">
+<section id="section-7">
+      <h2 id="name-discovery-aspects">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-discovery-aspects" class="section-name selfRef">Discovery Aspects</a>
+      </h2>
+<p id="section-7-1">Discovery in open environments requires resolving an agent identifier to
+current network locations and advertised capabilities across administrative
+domains. Existing mechanisms do not support capability-aware, federated
+resolution without pre-established trust relationships.
+A2A introduces the Agent Card, a JSON document available at a well-known URI
+(/.well-known/agent.json) that advertises agent capabilities. While useful,
+this mechanism assumes prior knowledge of the agent's domain.
+A scalable discovery system requires:<a href="#section-7-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-7-2.1">
+          <p id="section-7-2.1.1">Globally unique agent identifiers ( e.g DNS-rooted)<a href="#section-7-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-7-2.2">
+          <p id="section-7-2.2.1">Signed Agent Capability Documents<a href="#section-7-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-7-2.3">
+          <p id="section-7-2.3.1">Federation protocols with provenance tagging and hop limits<a href="#section-7-2.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-7-3">Concrete mechanisms for agent resolution and capability-based discovery are
+the subject of ongoing, early-stage work in the IETF and are not yet settled.
+AIPF treats the discovery requirements above as in scope and will reference
+specific mechanisms once that work matures.<a href="#section-7-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security">
+<section id="section-8">
+      <h2 id="name-security-aspects">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-security-aspects" class="section-name selfRef">Security Aspects</a>
+      </h2>
+<p id="section-8-1">Security for agent communication spans four interdependent concerns: verifiable agent identity, channel protection, binding of authorized intent to agent execution, and delegation chain integrity. The use cases and protocol requirements that motivate this architecture are discussed in <span>[<a href="#I-D.agentic-ai-usecases-requirements" class="cite xref">I-D.agentic-ai-usecases-requirements</a>]</span>. Some of the mechanisms for satisfying these requirements using existing IETF standards are described in <span>[<a href="#I-D.klrc-aiagent-auth" class="cite xref">I-D.klrc-aiagent-auth</a>]</span>.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<div id="agent-identity">
+<section id="section-8.1">
+        <h3 id="name-agent-identity">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-agent-identity" class="section-name selfRef">Agent Identity</a>
+        </h3>
+<p id="section-8.1-1">Agent identity encompasses two concerns: a stable unique identifier and cryptographic credentials bound to that identifier.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+<p id="section-8.1-2">Every agent is required to be assigned a unique, stable identifier that remains consistent across network reconnections and session resumptions. Credentials are required to be bound to the agent's identity. The credential lifecycle, including provisioning, rotation, and revocation, is required to be supported without manual intervention. <span>[<a href="#I-D.klrc-aiagent-auth" class="cite xref">I-D.klrc-aiagent-auth</a>]</span> defines an Agent Identity Management System (AIMS) that is a conceptual model describing the set of functions required to establish, maintain, and evaluate the identity and permissions of an agent workload.<a href="#section-8.1-2" class="pilcrow">¶</a></p>
+<p id="section-8.1-3">These identity requirements are satisfied by using WIMSE Workload Credentials <span>[<a href="#I-D.ietf-wimse-workload-creds" class="cite xref">I-D.ietf-wimse-workload-creds</a>]</span>: a Workload Identity Token (WIT) at the application layer and a Workload Identity Certificate (WIC) at the transport layer. Both bind a public key to the agent's workload identity.<a href="#section-8.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="channel-protection">
+<section id="section-8.2">
+        <h3 id="name-channel-protection">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-channel-protection" class="section-name selfRef">Channel Protection</a>
+        </h3>
+<p id="section-8.2-1">All agent communication is required to be encrypted and mutually authenticated. AIPF does not define a fallback to cleartext or unauthenticated operation.
+Authentication may operate at the transport layer, the application layer, or both. Transport-layer authentication works well when TLS connections are not terminated by intermediaries. In architectures involving proxies, application-layer authentication is required to maintain identity continuity across TLS termination points. The channel protection mechanism is required to be negotiated during session establishment, with both endpoints authenticating before any task state or authorization token is exchanged.<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="intent-execution">
+<section id="section-8.3">
+        <h3 id="name-intent-execution-separation">
+<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-intent-execution-separation" class="section-name selfRef">Intent-Execution Separation</a>
+        </h3>
+<p id="section-8.3-1">Autonomous agents dynamically generate execution plans and issue sub-requests based on their own reasoning, which may diverge from the scope of the original user authorization. AIPF requires that authorization granted to an agent be limited to the scope of the delegated task, so that an agent cannot use it to authorize actions outside that scope. This depends on delegation mechanics in which an agent acts on behalf of the original user and the authority passed at each hop is narrowed to the delegated task rather than broadened. Standardizing these delegation mechanics for AI agents is an active area of work in the OAuth WG; AIPF will profile the relevant outcomes as this work matures.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="delegation-chain">
+<section id="section-8.4">
+        <h3 id="name-delegation-chain-integrity">
+<a href="#section-8.4" class="section-number selfRef">8.4. </a><a href="#name-delegation-chain-integrity" class="section-name selfRef">Delegation Chain Integrity</a>
+        </h3>
+<p id="section-8.4-1">When one agent delegates a sub-task to another, the receiving agent is authorized only to the extent explicitly permitted by the delegating agent. In multi-hop scenarios, the delegation chain may span several agents before reaching the resource or tool ultimately invoked. At each hop, the receiving party is required to verify that the authority presented was derived from the human or system that originally authorized the task, has not been expanded beyond what was originally granted, and has not been forged or modified in transit. A delegating agent is not permitted to grant authority beyond what the original authorization permits for the delegated task. This draft will be updated with more details as the work progresses in the OAuth WG.<a href="#section-8.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="audit">
+<section id="section-8.5">
+        <h3 id="name-audit-and-non-repudiation">
+<a href="#section-8.5" class="section-number selfRef">8.5. </a><a href="#name-audit-and-non-repudiation" class="section-name selfRef">Audit and Non-Repudiation</a>
+        </h3>
+<p id="section-8.5-1">Agents act on behalf of users or other agents across multiple hops and
+administrative domains. Audit requires that each action be traceable to the
+principal that authorized it and the agent that executed it. For Non-repudiation, 
+this traceability is required to be cryptographically verifiable, so that 
+no party can later deny its role. The mechanism for recording and 
+verifying it is outside the scope of this framework.<a href="#section-8.5-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="transport">
+<section id="section-9">
+      <h2 id="name-transport-protocols-aspects">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-transport-protocols-aspects" class="section-name selfRef">Transport protocols Aspects</a>
+      </h2>
+<p id="section-9-1">Transport for agent-to-agent communication spans several interdependent concerns: session continuity across long-running tasks, heterogeneous delivery semantics, explicit task and stream correlation, efficient movement of large context and data objects, signaling for priority and cancellation, structured error propagation, and negotiation of modalities and group communication topologies. The use cases and protocol requirements that motivate these transport properties are discussed in <span>[<a href="#I-D.agentic-ai-usecases-requirements" class="cite xref">I-D.agentic-ai-usecases-requirements</a>]</span>. The transport substrate is not required merely to deliver bytes between endpoints; it is required to preserve the correctness, efficiency, and recoverability of delegated agent execution across administrative domains and under changing network conditions.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<div id="delivery-semantics">
+<section id="section-9.1">
+        <h3 id="name-delivery-semantics">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-delivery-semantics" class="section-name selfRef">Delivery Semantics</a>
+        </h3>
+<p id="section-9.1-1">Agent communication requires heterogeneous transport semantics rather than a single uniform model.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.1-2">Agent communication patterns fall into three broad delivery semantic classes, each with distinct transport properties:<a href="#section-9.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.1-3">Reliable ordered delivery: : Used for control messages, workflow state updates, authorization checkpoints, and structured results. The transport substrate is required to guarantee in-order, lossless delivery for these message classes, and is required to isolate them from other traffic classes to avoid head-of-line blocking.<a href="#section-9.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.1-4">Low-latency, loss-tolerant delivery: Used for real-time audio, video, and high-frequency sensor or telemetry streams. The transport substrate is required to minimize latency for these streams and is not required to guarantee delivery or ordering.<a href="#section-9.1-4" class="pilcrow">¶</a></p>
+<p id="section-9.1-5">High-throughput reliable delivery: Used for large context payloads and model inputs and outputs. The transport substrate is required to support high-throughput reliable transfer with flow-control isolation from other traffic classes. Where in-band transfer is impractical, a secure, integrity-protected out-of-band transfer mechanism is required to be supported.<a href="#section-9.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="message-exchange">
+<section id="section-9.2">
+        <h3 id="name-message-exchange-patterns">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-message-exchange-patterns" class="section-name selfRef">Message Exchange Patterns</a>
+        </h3>
+<p id="section-9.2-1">Agent tasks are not limited to simple request-response exchange. An agent may delegate work asynchronously, receive an acknowledgement before completion, stream partial results, emit progress updates, request additional authorization, and later return a final result or cancellation status. The transport is required to take these patterns explicitly into account, including correlation of messages to the relevant task, subtask, and session. Multiplexing is required so that multiple delegated tasks or tool invocations can proceed concurrently without unrelated head-of-line blocking. The transport is also required to permit out-of-order completion of concurrent subtasks while preserving per-task ordering for incremental output and terminal states.<a href="#section-9.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="priority">
+<section id="section-9.3">
+        <h3 id="name-priority-and-scheduling">
+<a href="#section-9.3" class="section-number selfRef">9.3. </a><a href="#name-priority-and-scheduling" class="section-name selfRef">Priority and Scheduling</a>
+        </h3>
+<p id="section-9.3-1">Delegated agent work varies in urgency and consequence. Some exchanges are on the critical path of a user-visible task, while others are background enrichment, speculative reasoning, or deferred synchronization. The protocol is required to signal task priority and delivery urgency so that transport and scheduling layers can differentiate service. Such signaling is required to be advisory and policy-controlled; a sender is not permitted to raise priority beyond the authority or policy of the delegated task. Priority signaling is also required for coordination messages such as authorization responses, cancellation acknowledgements, and error notifications, because delaying them can break an otherwise correct workflow.<a href="#section-9.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="multimodal">
+<section id="section-9.4">
+        <h3 id="name-multimodal-negotiation">
+<a href="#section-9.4" class="section-number selfRef">9.4. </a><a href="#name-multimodal-negotiation" class="section-name selfRef">Multimodal Negotiation</a>
+        </h3>
+<p id="section-9.4-1">Agents may exchange text, structured objects, images, audio, video, and sensor data within a session. The transport protocol is required to support negotiation of modalities and formats during session establishment or capability discovery. The negotiated set is binding unless explicitly updated; an endpoint is not permitted to send an unsupported modality. Transport-relevant modality properties, including reliability, latency sensitivity, and expected size, are required to inform stream selection, flow-control allocation, and framing. Modality negotiation therefore constrains both content and transport behavior.<a href="#section-9.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="error-signaling">
+<section id="section-9.5">
+        <h3 id="name-structured-error-and-progre">
+<a href="#section-9.5" class="section-number selfRef">9.5. </a><a href="#name-structured-error-and-progre" class="section-name selfRef">Structured Error and Progress Signaling</a>
+        </h3>
+<p id="section-9.5-1">The transport is required to carry more than final results. It is required to also convey incremental output, progress updates, checkpoint states, cancellation states, and structured errors usable by an orchestrating peer. Error signaling is required to distinguish transport failure from application failure, authorization failure, policy rejection, timeout, validation failure, and interoperability problems. Progress and liveness notifications are required to be representable independently of final completion so that a peer can tell whether an agent is active, blocked on external input, or waiting in a recoverable state. It is required to ensure that terminal error or cancellation signals are not silently lost if an ordinary data stream fails.<a href="#section-9.5-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="cancellation">
+<section id="section-9.6">
+        <h3 id="name-cancellation-and-interrupti">
+<a href="#section-9.6" class="section-number selfRef">9.6. </a><a href="#name-cancellation-and-interrupti" class="section-name selfRef">Cancellation and Interruption</a>
+        </h3>
+<p id="section-9.6-1">Agent execution may be interrupted by user action, policy enforcement, higher-priority work, loss of authorization, or dependent-subtask failure. The protocol is required to define explicit application-layer cancellation and interruption signaling, rather than rely on connection teardown. Cancellation is required to identify the affected scope, including a single invocation, delegated subtree, or session. Receiving agents are required to treat cancellation as idempotent and report whether execution stopped, had already completed, or could not be fully rolled back due to an irreversible action. In multi-hop deployments, interruption semantics are required to propagate predictably so that dependent subtasks do not continue after withdrawal of the parent task.<a href="#section-9.6-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="topologies">
+<section id="section-9.7">
+        <h3 id="name-multiple-communication-topo">
+<a href="#section-9.7" class="section-number selfRef">9.7. </a><a href="#name-multiple-communication-topo" class="section-name selfRef">Multiple Communication topologies</a>
+        </h3>
+<p id="section-9.7-1">Some agent interactions may use one-to-many or many-to-many communication among a group of agents whose membership may change during an exchange. The transport is required to support these delivery patterns and to handle agents joining or leaving the group while the exchange is active. An agent's authorization to participate is required to be verified when it joins, and the keying material is required to be updated whenever an agent joins or leaves, so that an agent can decrypt group traffic only while it is a member.<a href="#section-9.7-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="sessioncont">
+<section id="section-10">
+      <h2 id="name-session-continuity">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-session-continuity" class="section-name selfRef">Session Continuity</a>
+      </h2>
+<p id="section-10-1">Agent interactions are often long-lived, interruption-prone, and delegated across multiple hops. Each session is required to have a stable application-layer context identifier that survives reconnection, endpoint migration, and resumption. The transport mapping is required to let an authorized peer re-attach to an interrupted session and restore enough task context to continue without redoing completed work. Session continuity is thus defined above any TCP connection, QUIC connection, or TLS association. QUIC migration and TLS resumption help, but they preserve transport or cryptographic state, not the higher-layer task, delegation, and execution state autonomous agents require.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-2">Context continuity is required to provide a persistent context identifier, a record of task progress that lets an authorized peer resume from the last completed step, and a means to verify context integrity. Connection-level continuity, which covers surviving path changes and re-establishing dropped connections, is provided by QUIC Connection ID and TLS resumption.<a href="#section-10-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="existingworks">
+<section id="section-11">
+      <h2 id="name-applicability-of-existing-i">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-applicability-of-existing-i" class="section-name selfRef">Applicability of Existing IETF Work</a>
+      </h2>
+<p id="section-11-1">## Reuse As-Is<a href="#section-11-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-11-2.1">
+          <p id="section-11-2.1.1">TLS 1.3 <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span> provides mutual authentication and channel protection. Agents 
+are required to negotiate TLS 1.3 or higher.<a href="#section-11-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-11-2.2">
+          <p id="section-11-2.2.1">QUIC <span>[<a href="#RFC9000" class="cite xref">RFC9000</a>]</span> and QUIC-TLS <span>[<a href="#RFC9001" class="cite xref">RFC9001</a>]</span> provide multiplexed streams and 0-RTT 
+session resumption.<a href="#section-11-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-11-2.3">
+          <p id="section-11-2.3.1">OAuth 2.0 Token Exchange <span>[<a href="#RFC8693" class="cite xref">RFC8693</a>]</span> provides the base token exchange mechanism.<a href="#section-11-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-11-2.4">
+          <p id="section-11-2.4.1">WIMSE Workload Credentials <span>[<a href="#I-D.ietf-wimse-workload-creds" class="cite xref">I-D.ietf-wimse-workload-creds</a>]</span> are reused for agent
+identity; see <a href="#agent-identity" class="auto internal xref">Section 8.1</a>.<a href="#section-11-2.4.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<div id="profile-or-extend">
+<section id="section-11.1">
+        <h3 id="name-profile-or-extend">
+<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-profile-or-extend" class="section-name selfRef">Profile or Extend</a>
+        </h3>
+<p id="section-11.1-1">The following existing protocols may require profiling or extension; this list is expected to evolve as new IETF and OAuth WG specifications emerge:<a href="#section-11.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-11.1-2.1">
+            <p id="section-11.1-2.1.1">The OAuth WG is actively discussing how existing and new mechanisms apply to AI agent authorization. <span>[<a href="#I-D.ietf-oauth-identity-chaining" class="cite xref">I-D.ietf-oauth-identity-chaining</a>]</span> addresses cross-domain authorization, and <span>[<a href="#I-D.ietf-oauth-transaction-tokens" class="cite xref">I-D.ietf-oauth-transaction-tokens</a>]</span> addresses intra-domain token exchange between workloads. New proposals such as <span>[<a href="#I-D.hardt-aauth-protocol" class="cite xref">I-D.hardt-aauth-protocol</a>]</span> are also under discussion. AIPF will track this work and profile the relevant outcomes once the OAuth WG reaches consensus.<a href="#section-11.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.1-2.2">
+            <p id="section-11.1-2.2.1">MoQT (Media over QUIC Transport): acts as a unified transport substrate for distributed agent state synchronization and real-time multimodal communications. Work needs to happen to provide a common mapping of request-response and streaming patterns onto the pub/sub model of MoQT in order to enable interoperability across diverse agent ecosystems.<a href="#section-11.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-11.1-2.3">
+            <p id="section-11.1-2.3.1">More TBD..<a href="#section-11.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="new-protocol-work">
+<section id="section-11.2">
+        <h3 id="name-new-protocol-work">
+<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-new-protocol-work" class="section-name selfRef">New Protocol Work</a>
+        </h3>
+<p id="section-11.2-1">TBD<a href="#section-11.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="secconsiderations">
+<section id="section-12">
+      <h2 id="name-security-considerations">
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-12-1">AI agents enlarge the attack surface: they act autonomously, delegate across administrative domains, and operate over long-lived sessions that accumulate sensitive task context and rely on long-standing delegated authority. This section highlights threats specific to the building blocks in this document; detailed mitigations are expected in the companion specifications.<a href="#section-12-1" class="pilcrow">¶</a></p>
+<p id="section-12-2">Delegated authority is the primary risk. A rogue or compromised agent may attempt to use delegated authority beyond the task it was granted, or to broaden it as it delegates onward. As required in <a href="#intent-execution" class="auto internal xref">Section 8.3</a> and <a href="#delegation-chain" class="auto internal xref">Section 8.4</a>, authority granted to an agent is scoped to the delegated task and cannot be broadened along the chain, and the delegation chain is verifiable at each hop so an intermediary cannot forge or escalate it.<a href="#section-12-2" class="pilcrow">¶</a></p>
+<p id="section-12-3">Because agents exchange rich, potentially sensitive multimodal context, both message content and metadata require protection. Even with content encrypted, analysis of message sizes, timing, and stream patterns can leak the nature of an agent's tasks; mitigations such as padding may be warranted where that exposure matters.<a href="#section-12-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ianaconsideration">
+<section id="section-13">
+      <h2 id="name-iana-considerations">
+<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-13-1">TBD<a href="#section-13-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="section-14">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="section-14-1">The authors thank Kehan Yao for the discussion and comments.<a href="#section-14-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-15">
+      <h2 id="name-references">
+<a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-15.1">
+        <h3 id="name-normative-references">
+<a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8446">[RFC8446]</dt>
+        <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="seriesInfo">RFC 8446</span>, <span class="seriesInfo">DOI 10.17487/RFC8446</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8446">https://www.rfc-editor.org/rfc/rfc8446</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8693">[RFC8693]</dt>
+        <dd>
+<span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Nadalin, A.</span>, <span class="refAuthor">Campbell, B., Ed.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">C. Mortimore</span>, <span class="refTitle">"OAuth 2.0 Token Exchange"</span>, <span class="seriesInfo">RFC 8693</span>, <span class="seriesInfo">DOI 10.17487/RFC8693</span>, <time datetime="2020-01" class="refDate">January 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8693">https://www.rfc-editor.org/rfc/rfc8693</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9000">[RFC9000]</dt>
+        <dd>
+<span class="refAuthor">Iyengar, J., Ed.</span> and <span class="refAuthor">M. Thomson, Ed.</span>, <span class="refTitle">"QUIC: A UDP-Based Multiplexed and Secure Transport"</span>, <span class="seriesInfo">RFC 9000</span>, <span class="seriesInfo">DOI 10.17487/RFC9000</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9000">https://www.rfc-editor.org/rfc/rfc9000</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9001">[RFC9001]</dt>
+        <dd>
+<span class="refAuthor">Thomson, M., Ed.</span> and <span class="refAuthor">S. Turner, Ed.</span>, <span class="refTitle">"Using TLS to Secure QUIC"</span>, <span class="seriesInfo">RFC 9001</span>, <span class="seriesInfo">DOI 10.17487/RFC9001</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9001">https://www.rfc-editor.org/rfc/rfc9001</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9420">[RFC9420]</dt>
+      <dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Robert, R.</span>, <span class="refAuthor">Millican, J.</span>, <span class="refAuthor">Omara, E.</span>, and <span class="refAuthor">K. Cohn-Gordon</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Protocol"</span>, <span class="seriesInfo">RFC 9420</span>, <span class="seriesInfo">DOI 10.17487/RFC9420</span>, <time datetime="2023-07" class="refDate">July 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9420">https://www.rfc-editor.org/rfc/rfc9420</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-15.2">
+        <h3 id="name-informative-references">
+<a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="A2A">[A2A]</dt>
+        <dd>
+<span class="refAuthor">Google</span>, <span class="refTitle">"Agent2Agent Protocol Specification"</span>, <time datetime="2025" class="refDate">2025</time>, <span>&lt;<a href="https://a2a-protocol.org/v0.2.5/specification/">https://a2a-protocol.org/v0.2.5/specification/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="ACP">[ACP]</dt>
+        <dd>
+<span class="refAuthor">BeeAI</span>, <span class="refTitle">"Agent Communication Protocol"</span>, <time datetime="2025" class="refDate">2025</time>, <span>&lt;<a href="https://agentcommunicationprotocol.dev/">https://agentcommunicationprotocol.dev/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.agentic-ai-usecases-requirements">[I-D.agentic-ai-usecases-requirements]</dt>
+        <dd>
+<span class="refAuthor">Reddy.K, T.</span>, <span class="refAuthor">Sarker, Z.</span>, and <span class="refAuthor">K. Yao</span>, <span class="refTitle">"Agentic AI Use Cases and Requirements"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-agentic-ai-usecases-requirements-02</span>, <time datetime="2026-08-25" class="refDate">25 August 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-agentic-ai-usecases-requirements-02">https://datatracker.ietf.org/doc/html/draft-agentic-ai-usecases-requirements-02</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.hardt-aauth-protocol">[I-D.hardt-aauth-protocol]</dt>
+        <dd>
+<span class="refAuthor">Hardt, D.</span>, <span class="refTitle">"AAuth Protocol"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-hardt-aauth-protocol-02</span>, <time datetime="2026-04-28" class="refDate">28 April 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-hardt-aauth-protocol-02">https://datatracker.ietf.org/doc/html/draft-hardt-aauth-protocol-02</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-oauth-identity-chaining">[I-D.ietf-oauth-identity-chaining]</dt>
+        <dd>
+<span class="refAuthor">Schwenkschuster, A.</span>, <span class="refAuthor">Kasselman, P.</span>, <span class="refAuthor">Burgin, K.</span>, <span class="refAuthor">Jenkins, M. J.</span>, <span class="refAuthor">Campbell, B.</span>, and <span class="refAuthor">A. Parecki</span>, <span class="refTitle">"OAuth Identity and Authorization Chaining Across Domains"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-oauth-identity-chaining-17</span>, <time datetime="2026-07-19" class="refDate">19 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-identity-chaining-17">https://datatracker.ietf.org/doc/html/draft-ietf-oauth-identity-chaining-17</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-oauth-transaction-tokens">[I-D.ietf-oauth-transaction-tokens]</dt>
+        <dd>
+<span class="refAuthor">Tulshibagwale, A.</span>, <span class="refAuthor">Fletcher, G.</span>, and <span class="refAuthor">P. Kasselman</span>, <span class="refTitle">"Transaction Tokens"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-oauth-transaction-tokens-11</span>, <time datetime="2026-07-30" class="refDate">30 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-transaction-tokens-11">https://datatracker.ietf.org/doc/html/draft-ietf-oauth-transaction-tokens-11</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-wimse-workload-creds">[I-D.ietf-wimse-workload-creds]</dt>
+        <dd>
+<span class="refAuthor">Campbell, B.</span>, <span class="refAuthor">Salowey, J. A.</span>, <span class="refAuthor">Schwenkschuster, A.</span>, <span class="refAuthor">Sheffer, Y.</span>, and <span class="refAuthor">Y. Rosomakho</span>, <span class="refTitle">"WIMSE Workload Credentials"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-wimse-workload-creds-02</span>, <time datetime="2026-07-02" class="refDate">2 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-wimse-workload-creds-02">https://datatracker.ietf.org/doc/html/draft-ietf-wimse-workload-creds-02</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.klrc-aiagent-auth">[I-D.klrc-aiagent-auth]</dt>
+        <dd>
+<span class="refAuthor">Kasselman, P.</span>, <span class="refAuthor">Lombardo, J.</span>, <span class="refAuthor">Rosomakho, Y.</span>, <span class="refAuthor">Campbell, B.</span>, <span class="refAuthor">Steele, N.</span>, and <span class="refAuthor">A. Parecki</span>, <span class="refTitle">"AI Agent Authentication and Authorization"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-klrc-aiagent-auth-03</span>, <time datetime="2026-07-06" class="refDate">6 July 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-klrc-aiagent-auth-03">https://datatracker.ietf.org/doc/html/draft-klrc-aiagent-auth-03</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.yao-catalist-problem-space">[I-D.yao-catalist-problem-space]</dt>
+        <dd>
+<span class="refAuthor">Yao, K.</span> and <span class="refAuthor">Z. Sarker</span>, <span class="refTitle">"Problem Space Analysis of AI Agent Protocols in IETF"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-yao-catalist-problem-space-analysis-01</span>, <time datetime="2026-03" class="refDate">March 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-yao-catalist-problem-space-analysis-01">https://datatracker.ietf.org/doc/html/draft-yao-catalist-problem-space-analysis-01</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="MCP">[MCP]</dt>
+        <dd>
+<span class="refAuthor">Anthropic</span>, <span class="refTitle">"Model Context Protocol"</span>, <time datetime="2024" class="refDate">2024</time>, <span>&lt;<a href="https://modelcontextprotocol.io/specification">https://modelcontextprotocol.io/specification</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9261">[RFC9261]</dt>
+        <dd>
+<span class="refAuthor">Sullivan, N.</span>, <span class="refTitle">"Exported Authenticators in TLS"</span>, <span class="seriesInfo">RFC 9261</span>, <span class="seriesInfo">DOI 10.17487/RFC9261</span>, <time datetime="2022-07" class="refDate">July 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9261">https://www.rfc-editor.org/rfc/rfc9261</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9750">[RFC9750]</dt>
+      <dd>
+<span class="refAuthor">Beurdouche, B.</span>, <span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Omara, E.</span>, <span class="refAuthor">Inguva, S.</span>, and <span class="refAuthor">A. Duric</span>, <span class="refTitle">"The Messaging Layer Security (MLS) Architecture"</span>, <span class="seriesInfo">RFC 9750</span>, <span class="seriesInfo">DOI 10.17487/RFC9750</span>, <time datetime="2025-04" class="refDate">April 2025</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9750">https://www.rfc-editor.org/rfc/rfc9750</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-A">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Zaheduzzaman Sarker</span></div>
+<div dir="auto" class="left"><span class="org">Nokia</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:zaheduzzaman.sarker@nokia.com" class="email">zaheduzzaman.sarker@nokia.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Tirumaleswar Reddy</span></div>
+<div dir="auto" class="left"><span class="org">Nokia</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:k.tirumaleswar_reddy@nokia.com" class="email">k.tirumaleswar_reddy@nokia.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Kehan Yao</span></div>
+<div dir="auto" class="left"><span class="org">China Mobile</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:yaokehan@chinamobile.com" class="email">yaokehan@chinamobile.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Dapeng Liu</span></div>
+<div dir="auto" class="left"><span class="org">Alibaba Cloud</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:max.ldp@alibaba-inc.com" class="email">max.ldp@alibaba-inc.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Suresh Krishnan</span></div>
+<div dir="auto" class="left"><span class="org">Cisco</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:suresh.krishnan@gmail.com" class="email">suresh.krishnan@gmail.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
