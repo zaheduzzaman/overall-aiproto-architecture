@@ -1,0 +1,83 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2026-09-01T04:28:07.942560+00:00",
+  "repo": "zaheduzzaman/overall-aiproto-architecture",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOTu3Wf88AAAABA6kNAQ",
+      "title": "Add files via upload",
+      "url": "https://github.com/zaheduzzaman/overall-aiproto-architecture/pull/1",
+      "state": "MERGED",
+      "author": "zaheduzzaman",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-08-25T09:28:49Z",
+      "updatedAt": "2026-08-25T09:29:30Z",
+      "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
+      "baseRefName": "main",
+      "baseRefOid": "ac0092291c2b3d813f605efe537b75ab51f8fd76",
+      "headRepository": "zaheduzzaman/overall-aiproto-architecture",
+      "headRefName": "zaheduzzaman-patch-1",
+      "headRefOid": "3ec465c3aa3176eca53b57df29e02f91b611ced8",
+      "closedAt": "2026-08-25T09:29:30Z",
+      "mergedAt": "2026-08-25T09:29:30Z",
+      "mergedBy": "zaheduzzaman",
+      "mergeCommit": {
+        "oid": "197409dc3716db925103a7146b59fb3777577cdb"
+      },
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}
