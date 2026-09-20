@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-09-17T04:19:08.299538+00:00",
+  "timestamp": "2026-09-20T04:19:14.217819+00:00",
   "repo": "zaheduzzaman/overall-aiproto-architecture",
   "labels": [
     {
@@ -76,6 +76,32 @@
       "mergeCommit": {
         "oid": "197409dc3716db925103a7146b59fb3777577cdb"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOTu3Wf88AAAABD6DPKw",
+      "title": "Update draft to align with the revised charter",
+      "url": "https://github.com/zaheduzzaman/overall-aiproto-architecture/pull/2",
+      "state": "OPEN",
+      "author": "tireddy2",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-09-17T10:06:57Z",
+      "updatedAt": "2026-09-17T10:06:57Z",
+      "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
+      "baseRefName": "main",
+      "baseRefOid": "c12f52c5af69d9a11e9b572e4a30b7f6f88772a9",
+      "headRepository": "tireddy2/overall-aiproto-architecture",
+      "headRefName": "main",
+      "headRefOid": "f34e2eafe1737655a41f429c5e713c4a2b45b9f4",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
