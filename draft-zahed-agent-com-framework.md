@@ -1,6 +1,6 @@
 ---
-title: "AI Agent Interoperable Protocol Framework (AIPF)"
-abbrev: "AIPF"
+title: "Reference Architecture for Agent Communication"
+abbrev: "Agent Comm Architecture"
 docname: draft-zahed-agent-com-framework-latest
 category: info
 ipr: trust200902
@@ -35,33 +35,19 @@ author:
     email: suresh.krishnan@gmail.com
 
 normative:
-  RFC2119:
-  RFC8174:
   RFC8446:
   RFC8693:
   RFC9000:
   RFC9001:
-  RFC9420:
 
 informative:
   RFC9261:
-  RFC9750:
   I-D.hardt-aauth-protocol:
   I-D.agentic-ai-usecases-requirements:
-  I-D.klrc-aiagent-auth:
+  I-D.ietf-wimse-aims:
   I-D.ietf-oauth-identity-chaining:
   I-D.ietf-oauth-transaction-tokens:
   I-D.ietf-wimse-workload-creds:
-  I-D.yao-catalist-problem-space:
-    title: "Problem Space Analysis of AI Agent Protocols in IETF"
-    author:
-      - name: K. Yao
-        org: China Mobile
-      - name: Z. Sarker
-        org: Nokia
-    date: 2026-03
-    seriesinfo:
-      Internet-Draft: draft-yao-catalist-problem-space-analysis-01
   A2A:
     title: "Agent2Agent Protocol Specification"
     author:
@@ -74,206 +60,201 @@ informative:
       - org: Anthropic
     target: https://modelcontextprotocol.io/specification
     date: 2024
-  ACP:
-    title: "Agent Communication Protocol"
-    author:
-      - org: BeeAI
-    target: https://agentcommunicationprotocol.dev/
-    date: 2025
 
 --- abstract
 
-The current generation of AI agent communication protocols enables basic tool
-access and inter-agent messaging, but lacks the architectural and protocol
-foundations required for open, interoperable, and resilient Internet-scale
-deployments. This document presents the AI Agent Interoperable Protocol Framework
-(AIPF), a layered framework that identifies the key building blocks and the
-protocol suite required for interoperable Agent-to-agent/Agent-to-tool
-communication.
+This document describes a reference architecture for AI agent
+communication, covering user-to-agent, agent-to-agent, and agent-to-tool
+interactions. It defines the terms used in the architecture and identifies
+the functional blocks involved: an agent communication protocol that
+maintains dialog context and continuity, and the existing protocol building
+blocks it reuses, including identity, authentication, authorization,
+encryption, and transport. It also describes the relationships between
+these blocks.
 
 --- middle
 
 # Introduction {#intro}
 
-The emergence of autonomous AI agents that communicate, collaborate, and
-delegate tasks across the Internet introduces a new class of networked
-entity with requirements that existing protocol frameworks were not designed
-to address. A number of drafts have identified a cluster of open problems for
-which the IETF has a responsibility to provide standards-based solutions:
-inter-domain agent discovery, fine-grained delegated authorization across
-domain boundaries, multi-modal low-latency transport with session continuity,
-and secure transfer of accumulated task context across agent lifetimes.
+AI agents that communicate, collaborate, and delegate tasks
+across the Internet introduce a new class of networked entity with
+requirements that existing protocols were not designed to address.
+User-to-agent, agent-to-agent, and agent-to-tool interactions create dialogs
+that can be long-lived, span multiple intermediaries and trust boundaries,
+and involve multiple modalities such as text, audio, and video. Messages need
+to be associated with their dialog, and a dialog needs to survive transport
+connection interruptions. Dialogs also depend on verifiable agent identity, delegated authorization across
+agent chains, and confidentiality and integrity of the exchanged data.
 
-This document specifies the AI Agent Interoperable Protocol Framework
-(AIPF), an architectural framework. AIPF addresses the complete lifecycle of an
-inter-domain AI agent-to-agent and agent-to-tools interaction: how agents
-advertise capabilities and discover peers (the Discovery module), how
-agents establish verifiable identities, authenticate to each other, and
-authorize delegation chains (the Security module), and how agents establish
-low-latency multi-modal communication sessions that survive network
-interruptions and agent migrations (the Transport Sessions module).
-The protocol requirements that AIPF is designed to satisfy are defined in {{I-D.agentic-ai-usecases-requirements}}. This document specifies the architectural framework and building blocks necessary to satisfy those requirements, and identifies applicable existing IETF protocols and areas requiring new protocol work. This document serves both as an architectural reference and as input to the IETF standardization effort for AI agent communication protocols.
+This document describes a reference architecture for AI agent
+communication. It defines the terms used in the architecture and identifies
+the functional blocks involved: an agent communication protocol that
+maintains dialog context and continuity, and the existing protocol building
+blocks it reuses for identity, authentication, authorization, encryption,
+and transport. It describes the relationships between these blocks. The use
+cases and requirements that drive this architecture are described in
+{{I-D.agentic-ai-usecases-requirements}}. The mechanisms of the agent
+communication protocol are outside the scope of this document.
 
-MCP {{MCP}} and A2A {{A2A}} are application-layer protocols that are built on top of IETF standards, including HTTP, JSON, OAuth 2.0, and TLS, for their transport and security foundations. These protocols are intended to be complementary rather than competing: MCP focuses on interactions between an agent and its tools, while A2A focuses on horizontal agent-to-agent communication. While both of these protocols are open-source and are broadly adopted, they do not define the infrastructure-level building blocks such as cross-domain discovery, cryptographically verifiable delegation chains, session continuity, and multi-modal transport semantics that Internet-scale agent deployments require. This document analyzes these gaps and identifies existing IETF protocols that are suitable for use, as well as identifying new IETF protocol work that is needed.
+MCP {{MCP}} and A2A {{A2A}} are application-layer protocols
+maintained by the Linux Foundation. They use IETF protocols such as HTTP,
+OAuth 2.0, and TLS. MCP addresses agent-to-tool interactions, and A2A
+addresses agent-to-agent interactions. The agent communication protocol in
+this architecture is intended to be usable by these protocols through
+well-defined extension points, not to replace them.
 
-# Conventions and Definitions {#conventions}
+# Terminology {#terminology}
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
-and "OPTIONAL" in this document are to be interpreted as described in
-BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in all
-capitals, as shown here.
+Agent Identity:
+: Identity information associated with an AI agent, distinct from the
+  identity of the user on whose behalf it acts, and used for
+  authentication, authorization, and accountability.
 
-# Current Protocol Landscape {#landscape}
+AI Agent:
+: A software system that uses AI models to complete a task on behalf of a
+  user or another AI agent.
 
-Several industry-developed protocols address subsets of the agent
-communication problem:
+Capability:
+: A task that an AI agent can perform.
 
-Model Context Protocol (MCP) {{MCP}}:
-: MCP defines a standardized interface for AI agents to access tools,
-  resources, and APIs. It is primarily an agent-to-tool (A2T) protocol
-  operating within a single administrative domain, with manual
-  pre-configuration of tool endpoints. MCP does not define agent
-  discovery, cross-domain authentication, or session resumption.
+Delegation:
+: The act of an AI agent requesting another AI agent to execute a task on
+  its behalf.
 
-Agent2Agent Protocol (A2A) {{A2A}}:
-: A2A defines agent-to-agent communication using HTTP and Server-Sent
-  Events (SSE). It introduces the "Agent Card" for capability advertisement
-  and a "Task" object for session state. A2A's discovery depends on
-  knowledge of the target agent's URL and does not define cross-domain
-  federation. Session resumption after network disconnection is
-  implementation-specific. Authorization uses OAuth 2.0 scopes without
-  a defined delegation chain model.
+Dialog:
+: TBD.
 
-Agent Communication Protocol (ACP) {{ACP}}:
-: ACP uses REST/HTTP for local, synchronous and asynchronous agent
-  communication. It does not define Internet-scale discovery or
-  cross-domain security.
+Dialog Context:
+: TBD.
 
-As documented in {{I-D.yao-catalist-problem-space}}, the specific gaps
-that the IETF should address are:
+Dialog Identifier:
+: TBD.  
 
-1. No standardized mechanism for resolving agent identifiers to network
-   locations across domains.
+Intermediary:
+: An entity that relays or processes messages between dialog participants.
 
-2. No standardized cross-domain directory or federation mechanism for
-   capability-based agent discovery.
+Message:
+: A discrete unit of communication exchanged between dialog participants.
 
-3. No defined delegation chain model for multi-hop cross-domain
-   agent authorization with cryptographic verifiability and fine
-   grained authorization.
+Modality:
+: A category of data exchanged in a dialog, such as text, audio, image,
+  or video.
 
-4. No session state management with explicit resumption, timeout, and
-   migration semantics.
+Orchestrator Agent:
+: An AI agent that decomposes a task into sub-tasks and delegates them to
+  other AI agents.
 
-5. No multi-modal transport with per-stream reliability, ordering, and
-   latency semantics appropriate for real-time audio and video alongside
-   bulk data.
+Task:
+: A unit of work submitted by a user to an AI agent, or delegated by one
+  AI agent to another.
 
-6. No standardized agent context document format or protocol for secure
-   context transfer during agent migration.
+Tool:
+: A service invoked by an AI agent to retrieve data or perform operations.
+  A tool is not necessarily an AI agent.
 
-# Framework Scope {#problem}
+Trust Boundary:
+: A boundary between administrative domains.
 
-The use cases and protocol requirements that motivate this framework are
-defined in {{I-D.agentic-ai-usecases-requirements}}. This document takes
-those requirements as input and specifies the architectural framework and
-building blocks necessary to satisfy them.
+User:
+: A human who interacts with an AI agent.
 
-The gaps enumerated in {{landscape}} fall into four areas, each addressed by
-a separate section in the document:
+# Architecture Scope {#scope}
 
-- Inter-domain discovery and capability advertisement ({{discovery}})
-- Verifiable identity, authorization, and delegation ({{security}})
-- Heterogeneous, multi-modal transport ({{transport}})
-- Long-lived session continuity ({{sessioncont}})
+This architecture addresses the requirements in
+{{I-D.agentic-ai-usecases-requirements}}. It covers the following areas,
+each described in a separate section:
 
-Without standards-based solutions, long-running and cross-domain agent
-workflows cannot interoperate.
+- Identity, authentication, authorization, and encryption ({{security}})
+- Transport ({{transport}})
+- Dialog continuity ({{sessioncont}})
 
-# Design Philosophy {#philosophy}
+The following are outside the scope of this document:
 
-AIPF is designed around four commitments that should be taken into account in
-all companion protocol specifications:
+- Implementation details of AI agents, including AI models, backend AI
+  infrastructure, reasoning algorithms, and tool-specific business logic.
 
-Maximize reuse of existing IETF standards:
-: New protocol work is warranted only when existing mechanisms cannot
-  satisfy agent communication requirements without violating their
-  specification or breaking backward compatibility. The analysis in
-  this document shows that the majority of AIPF can be realized by
-  composing, extending, or profiling existing IETF protocols.
+- Agent behavior, decision-making, and planning.
 
-End-to-end security as a baseline, not an option:
-: Every AIPF interaction MUST be authenticated, encrypted, and
-  authorized. There is no defined fallback to cleartext or unauthenticated
-  operation. This is not a "security layer" applied on top; it is built
-  into the connection establishment procedure itself.
+- Prevention of AI model misbehavior, such as hallucination.
 
-Session-oriented, not request-response-oriented:
-: Agent communication is inherently long-lived and stateful. Every
-  protocol element is designed with the assumption that the task
-  context outlives any individual transport connection and is carried
-  across connection changes.
+- User interfaces and the rendering of agent outputs on end-user devices.
 
-Composability and incremental deployment:
-: A minimal AIPF deployment (two agents, same domain, bilateral session,
-  text-only modality) must interoperate with a full deployment (N agents,
-  cross-domain, multi-party group key, multi-modal streams, session
-  migration). Protocol elements that are not needed in a given interaction
-  can be negotiated away, and are not required.
+- Discovery of AI agents and tools.
 
-# Framework Composition {#composition}
+# Design Principles {#philosophy}
 
-- Discovery establishes trust anchors.
-- Security binds identity and authorization.
-- Transport provides multiplexed streams.
-- Sessions bind execution continuity.
+The architecture is based on the following principles:
 
-AIPF defines a vocabulary and interaction model ensuring these layers evolve
-coherently.
+Reuse of existing protocols:
+: The architecture reuses existing IETF protocols for identity,
+  authentication, authorization, encryption, and transport. Where an
+  existing protocol cannot meet a requirement, the gap is raised with the
+  responsible working group.
+
+Secure communication:
+: All communication is authenticated, authorized, and protected for
+  confidentiality and integrity.
+
+Dialog-oriented:
+: Dialogs are long-lived and stateful. Dialog context outlives any
+  individual transport connection and is preserved across connection
+  changes.
+
+Incremental deployment:
+: A minimal deployment, such as two AI agents in one domain exchanging
+  text, interoperates with a full deployment that spans multiple domains,
+  intermediaries, and modalities. A deployment implements only the
+  features it uses.
+
+# Architecture Composition {#composition}
+
+The architecture consists of the following functional blocks:
+
+- Security: provides identity, authentication, authorization, and
+  encryption.
+- Transport: carries messages between dialog participants.
+- Agent communication protocol: maintains dialog context and continuity.
+
+The architecture assumes that AI agents and tools can be discovered.
+Discovery is expected to be addressed by the DAWN WG and is outside the
+scope of this document.
 
 ## Operational Flow {#opflow}
 
-The use case for orchestrator-driven agent collaboration, including task delegation, result reporting, and session continuity, is described in Section 4.2 of {{I-D.agentic-ai-usecases-requirements}}. The operational flow for a complete interaction within this use case proceeds as follows:
+The use case for orchestrator and agent collaboration is
+described in Section 4.2 of {{I-D.agentic-ai-usecases-requirements}}. A
+complete interaction in this use case proceeds as follows:
 
-1. **Task Initiation**: A user provides a goal to e.g. an Orchestrator Agent.
+1. Task Initiation: A user submits a task to an Orchestrator Agent.
 
-2. **Agent Selection**: The Orchestrator Agent uses discovery protocols to discover
-   candidate Sub-agents that have the capabilities required for sub-tasks.
+2. Agent Selection: The Orchestrator Agent discovers AI agents with the
+   capabilities required for the sub-tasks.
 
-3. **Identity Establishment**: Before connecting, the Orchestrator Agent obtains verifiable credentials for itself and verifies the identity of the target Sub-agent.
+3. Authentication: The Orchestrator Agent and each selected AI agent
+   authenticate each other.
 
-4. **Authorization**: The Orchestrator Agent obtains an OAuth 2.0 delegation token scoped to the sub-task, derived from the original user authorization.
+4. Authorization: The Orchestrator Agent obtains authorization for each
+   sub-task. The authorization is derived from the user's authorization
+   and limited to the sub-task.
 
-5. **Connection Establishment**: The Orchestrator Agent initiates transport layer
-   protocol connection ( e.g a QUIC connection ) to the Sub-agent endpoint.
-   TLS 1.3 cryptographic layer ({{RFC9001}}) or MLS group key agreement ({{RFC9420}}, {{RFC9750}}) is established
-   for multi-party sessions as part of this connection establishment phase.
+5. Dialog Establishment: The Orchestrator Agent establishes a dialog with
+   each selected AI agent over a protected transport connection.
 
-6. **Session Creation**: Over the established transport protocol connection, the Orchestrator
-   Agent creates an Agent Session, negotiating modalities, stream
-   types, and session parameters.
+6. Task Execution: The AI agents exchange messages within the dialog. The
+   messages can carry multiple modalities.
 
-7. **Task Execution**: The agents exchange messages using application-layer
-   protocols (e.g., MCP, A2A) and Multi-modal data
-   (text, audio, video) is carried over the transport layer protocol with appropriate
-   priority and reliability settings.
+7. Dialog Continuity: If a transport connection is interrupted, the dialog
+   continues over a new transport connection.
 
-8. **Session Resumption or Migration**: If the underlying transport layer connection is
-   interrupted, the session could be resumed a pre-shared session ticket (e.g., QUIC session
-   resumption) when the connection is recovered. If the Sub-agent migrates to a new compute
-   node, and session will be created. In that case, the application need to retain the session
-   information to be reused in the new connection.
+8. Task Completion: The Orchestrator Agent returns the result to the user
+   and terminates the dialogs.
 
-9. **Task Completion**: The Orchestrator Agent receives results from Sub-agents,
-   synthesizes the final response, and delivers it to the user. Sessions are
-   gracefully terminated.
+## Architecture Overview {#framework}
 
-## Framework Overview {#framework}
-
-TODO: describe each of the blocks in details.
-
-AIPF is organized as a layered protocol stack. Each layer provides guarantees that the layer above depends on. The stack is shared by both communicating agents, with agent-to-agent interaction occurring at the agent layer and the protocol layers beneath providing the necessary security, authorization, session, and transport foundations.
+{{fig-arch}} shows the architecture. The Agent Communication
+Protocol uses the Dialog, Authorization and Delegation, and Identity
+Management components. It runs over the Transport layer, which is protected
+by the Security layer.
 
 ~~~
 +--------------------+                      +-------------------+
@@ -289,22 +270,14 @@ AIPF is organized as a layered protocol stack. Each layer provides guarantees th
                                  |
                                  v
 +---------------------------------------------------------------+
-|                          Context                              |
-|  - Context Identifier                                         |
-|  - Context Integrity Digest                                   |
-+---------------------------------------------------------------+
-                                 |
-                                 v
-+---------------------------------------------------------------+
-|             Authorization and Delegation                      |
-|  - Protocol : AUTH2.0                                         |
-+---------------------------------------------------------------+
-                                 |
-                                 v
-+---------------------------------------------------------------+
-|                Identity Management                            |
-|  - Workload Identity Tokens (WIT)                             |
-|  - WIMSE Proof Tokens (WPT)                                   |
+|                Agent Communication Protocol                   |
+|                                                               |
+| +-----------------+  +-----------------+  +-----------------+ |
+| | Dialog          |  | Authorization   |  | Identity        | |
+| |                 |  | and Delegation  |  | Management      | |
+| | - Context       |  |                 |  |                 | |
+| | - Identifier    |  | - OAuth 2.0     |  | - WIT, WPT      | |
+| +-----------------+  +-----------------+  +-----------------+ |
 +---------------------------------------------------------------+
                                  |
                                  v
@@ -326,15 +299,18 @@ AIPF is organized as a layered protocol stack. Each layer provides guarantees th
 ~~~
 {: #fig-arch title="Reference architecture"}
 
-TLS 1.3 provides channel protection and mutual authentication for all agent communication. When agents communicate directly over QUIC, TLS 1.3 is integrated into the QUIC handshake {{RFC9001}} and does not occupy a discrete layer above or below the transport. In architectures involving intermediaries where TLS is terminated at a proxy, application-layer authentication is required to maintain identity continuity across TLS termination points, as described in {{channel-protection}}.
+TLS 1.3 provides channel protection and mutual authentication for all agent communication. Security is shown as a separate layer in {{fig-arch}} for clarity. When agents communicate over QUIC, TLS 1.3 is integrated into the QUIC handshake {{RFC9001}} and does not occupy a discrete layer above or below the transport. In architectures involving intermediaries where TLS is terminated at a proxy, application-layer authentication is required to maintain identity continuity across TLS termination points, as described in {{channel-protection}}.
 
 QUIC provides multiplexed streams with per-stream semantics suitable for the heterogeneous communication patterns of agent interactions. MoQT (Media over QUIC Transport) adds a publish/subscribe layer over QUIC for the one-to-many and many-to-many group communication that point-to-point QUIC streams cannot provide.
 
-OAuth 2.0 provides the authorization and delegation framework, enabling agents to obtain and present access tokens scoped to specific tasks. WIMSE provides workload identity for agents through a URI embedded in X.509 certificates at the TLS layer, and through Workload Identity Tokens (WIT) and WIMSE Proof Tokens (WPT) at the application layer. The Agent Session Protocol (ASP) maintains context continuity, a stable context identifier and integrity verification across connection changes, including endpoint migration. Connection-level continuity is provided by QUIC Connection ID and TLS resumption. Agents interact at the top of the stack, each acting on behalf of a user or system.
+OAuth 2.0 provides the authorization and delegation framework, enabling agents to obtain and present access tokens scoped to specific tasks. WIMSE provides workload identity for agents through a URI embedded in X.509 certificates at the TLS layer, and through Workload Identity Tokens (WIT) and WIMSE Proof Tokens (WPT) at the application layer. The Agent Communication Protocol maintains dialog continuity across connection changes using a stable dialog identifier. Connection-level continuity is provided by QUIC Connection ID and TLS resumption. Agents interact at the top of the stack, each acting on behalf of a user or system.
 
-Attestation, as being defined in the SEAT WG, introduces mechanisms to bind attestation evidence to agent communications. The evidence may be carried during the TLS handshake or at the application layer. Attestation is not represented as a discrete layer in the diagram because it does not occupy a single position in the stack. Depending on the approach, attestation evidence may be conveyed during the TLS handshake or conveyed at the application layer by extending {{RFC9261}}. Its placement in the stack is therefore solution-specific and outside the scope of this framework document.
+Attestation, as defined in the SEAT WG, binds attestation evidence to agent communications. The evidence can be conveyed during the TLS handshake or at the application layer by extending {{RFC9261}}. Attestation is not shown as a discrete layer in {{fig-arch}} because its position in the stack is solution-specific. It is outside the scope of this document.
 
 # Discovery Aspects {#discovery}
+
+TODO: This text will be revised to point to the relevant
+specifications in the DAWN WG.
 
 Discovery in open environments requires resolving an agent identifier to
 current network locations and advertised capabilities across administrative
@@ -351,29 +327,27 @@ A scalable discovery system requires:
 
 Concrete mechanisms for agent resolution and capability-based discovery are
 the subject of ongoing, early-stage work in the IETF and are not yet settled.
-AIPF treats the discovery requirements above as in scope and will reference
-specific mechanisms once that work matures.
 
 # Security Aspects {#security}
 
-Security for agent communication spans four interdependent concerns: verifiable agent identity, channel protection, binding of authorized intent to agent execution, and delegation chain integrity. The use cases and protocol requirements that motivate this architecture are discussed in {{I-D.agentic-ai-usecases-requirements}}. Some of the mechanisms for satisfying these requirements using existing IETF standards are described in {{I-D.klrc-aiagent-auth}}.
+Security for agent communication spans four interdependent concerns: verifiable agent identity, channel protection, binding of authorized intent to agent execution, and delegation chain integrity. The use cases and protocol requirements that motivate this architecture are discussed in {{I-D.agentic-ai-usecases-requirements}}. Some of the mechanisms for satisfying these requirements using existing IETF standards are described in {{I-D.ietf-wimse-aims}}.
 
 ## Agent Identity {#agent-identity}
 
 Agent identity encompasses two concerns: a stable unique identifier and cryptographic credentials bound to that identifier.
 
-Every agent is required to be assigned a unique, stable identifier that remains consistent across network reconnections and session resumptions. Credentials are required to be bound to the agent's identity. The credential lifecycle, including provisioning, rotation, and revocation, is required to be supported without manual intervention. {{I-D.klrc-aiagent-auth}} defines an Agent Identity Management System (AIMS) that is a conceptual model describing the set of functions required to establish, maintain, and evaluate the identity and permissions of an agent workload.
+Every agent is required to be assigned a unique, stable identifier that remains consistent across network reconnections and dialog resumptions. Credentials are required to be bound to the agent's identity. The credential lifecycle, including provisioning, rotation, and revocation, is required to be supported without manual intervention. {{I-D.ietf-wimse-aims}} defines the term Agent Identity Management System (AIMS) as a conceptual model describing the set of functions required to establish, maintain, and evaluate the identity and permissions of an agent workload.
 
-These identity requirements are satisfied by using WIMSE Workload Credentials [I-D.ietf-wimse-workload-creds]: a Workload Identity Token (WIT) at the application layer and a Workload Identity Certificate (WIC) at the transport layer. Both bind a public key to the agent's workload identity.
+These identity requirements are satisfied by using WIMSE Workload Credentials {{I-D.ietf-wimse-workload-creds}}: a Workload Identity Token (WIT) at the application layer and a Workload Identity Certificate (WIC) at the transport layer. Both bind a public key to the agent's workload identity.
 
 ## Channel Protection {#channel-protection}
 
-All agent communication is required to be encrypted and mutually authenticated. AIPF does not define a fallback to cleartext or unauthenticated operation.
-Authentication may operate at the transport layer, the application layer, or both. Transport-layer authentication works well when TLS connections are not terminated by intermediaries. In architectures involving proxies, application-layer authentication is required to maintain identity continuity across TLS termination points. The channel protection mechanism is required to be negotiated during session establishment, with both endpoints authenticating before any task state or authorization token is exchanged.
+All agent communication is required to be encrypted and mutually authenticated. This architecture does not define a fallback to cleartext or unauthenticated operation.
+Authentication may operate at the transport layer, the application layer, or both. Transport-layer authentication works well when TLS connections are not terminated by intermediaries. In architectures involving proxies, application-layer authentication is required to maintain identity continuity across TLS termination points. The channel protection mechanism is required to be negotiated during transport connection establishment, with both endpoints authenticating before any message is exchanged.
 
 ## Intent-Execution Separation {#intent-execution}
 
-Autonomous agents dynamically generate execution plans and issue sub-requests based on their own reasoning, which may diverge from the scope of the original user authorization. AIPF requires that authorization granted to an agent be limited to the scope of the delegated task, so that an agent cannot use it to authorize actions outside that scope. This depends on delegation mechanics in which an agent acts on behalf of the original user and the authority passed at each hop is narrowed to the delegated task rather than broadened. Standardizing these delegation mechanics for AI agents is an active area of work in the OAuth WG; AIPF will profile the relevant outcomes as this work matures.
+AI agents dynamically generate execution plans and issue sub-requests based on their own reasoning, which may diverge from the scope of the original user authorization. This architecture requires that authorization granted to an agent be limited to the scope of the delegated task, so that an agent cannot use it to authorize actions outside that scope. This depends on delegation mechanics in which an agent acts on behalf of the original user and the authority passed at each hop is narrowed to the delegated task rather than broadened. Standardizing these delegation mechanics for AI agents is an active area of work in the OAuth WG. This document will reference the relevant outcomes as this work matures.
 
 ## Delegation Chain Integrity {#delegation-chain}
 
@@ -386,11 +360,11 @@ administrative domains. Audit requires that each action be traceable to the
 principal that authorized it and the agent that executed it. For Non-repudiation,
 this traceability is required to be cryptographically verifiable, so that
 no party can later deny its role. The mechanism for recording and
-verifying it is outside the scope of this framework.
+verifying it is outside the scope of this document.
 
 # Transport protocols Aspects {#transport}
 
-Transport for agent-to-agent communication spans several interdependent concerns: session continuity across long-running tasks, heterogeneous delivery semantics, explicit task and stream correlation, efficient movement of large context and data objects, signaling for priority and cancellation, structured error propagation, and negotiation of modalities and group communication topologies. The use cases and protocol requirements that motivate these transport properties are discussed in {{I-D.agentic-ai-usecases-requirements}}. The transport substrate is not required merely to deliver bytes between endpoints; it is required to preserve the correctness, efficiency, and recoverability of delegated agent execution across administrative domains and under changing network conditions.
+Transport for agent-to-agent communication spans several interdependent concerns: dialog continuity across long-running tasks, heterogeneous delivery semantics, explicit task and stream correlation, efficient movement of large context and data objects, signaling for priority and cancellation, structured error propagation, and negotiation of modalities and group communication topologies. The use cases and protocol requirements that motivate these transport properties are discussed in {{I-D.agentic-ai-usecases-requirements}}. The transport substrate is not required merely to deliver bytes between endpoints; it is required to preserve the correctness, efficiency, and recoverability of delegated agent execution across administrative domains and under changing network conditions.
 
 ## Delivery Semantics {#delivery-semantics}
 
@@ -406,7 +380,7 @@ High-throughput reliable delivery: Used for large context payloads and model inp
 
 ## Message Exchange Patterns {#message-exchange}
 
-Agent tasks are not limited to simple request-response exchange. An agent may delegate work asynchronously, receive an acknowledgement before completion, stream partial results, emit progress updates, request additional authorization, and later return a final result or cancellation status. The transport is required to take these patterns explicitly into account, including correlation of messages to the relevant task, subtask, and session. Multiplexing is required so that multiple delegated tasks or tool invocations can proceed concurrently without unrelated head-of-line blocking. The transport is also required to permit out-of-order completion of concurrent subtasks while preserving per-task ordering for incremental output and terminal states.
+Agent tasks are not limited to simple request-response exchange. An agent may delegate work asynchronously, receive an acknowledgement before completion, stream partial results, emit progress updates, request additional authorization, and later return a final result or cancellation status. The transport is required to take these patterns explicitly into account, including correlation of messages to the relevant task, subtask, and dialog. Multiplexing is required so that multiple delegated tasks or tool invocations can proceed concurrently without unrelated head-of-line blocking. The transport is also required to permit out-of-order completion of concurrent subtasks while preserving per-task ordering for incremental output and terminal states.
 
 ## Priority and Scheduling {#priority}
 
@@ -414,7 +388,7 @@ Delegated agent work varies in urgency and consequence. Some exchanges are on th
 
 ## Multimodal Negotiation {#multimodal}
 
-Agents may exchange text, structured objects, images, audio, video, and sensor data within a session. The transport protocol is required to support negotiation of modalities and formats during session establishment or capability discovery. The negotiated set is binding unless explicitly updated; an endpoint is not permitted to send an unsupported modality. Transport-relevant modality properties, including reliability, latency sensitivity, and expected size, are required to inform stream selection, flow-control allocation, and framing. Modality negotiation therefore constrains both content and transport behavior.
+Agents may exchange text, structured objects, images, audio, video, and sensor data within a dialog. The transport protocol is required to support negotiation of modalities and formats during dialog establishment or capability discovery. The negotiated set is binding unless explicitly updated; an endpoint is not permitted to send an unsupported modality. Transport-relevant modality properties, including reliability, latency sensitivity, and expected size, are required to inform stream selection, flow-control allocation, and framing. Modality negotiation therefore constrains both content and transport behavior.
 
 ## Structured Error and Progress Signaling {#error-signaling}
 
@@ -422,17 +396,17 @@ The transport is required to carry more than final results. It is required to al
 
 ## Cancellation and Interruption {#cancellation}
 
-Agent execution may be interrupted by user action, policy enforcement, higher-priority work, loss of authorization, or dependent-subtask failure. The protocol is required to define explicit application-layer cancellation and interruption signaling, rather than rely on connection teardown. Cancellation is required to identify the affected scope, including a single invocation, delegated subtree, or session. Receiving agents are required to treat cancellation as idempotent and report whether execution stopped, had already completed, or could not be fully rolled back due to an irreversible action. In multi-hop deployments, interruption semantics are required to propagate predictably so that dependent subtasks do not continue after withdrawal of the parent task.
+Agent execution may be interrupted by user action, policy enforcement, higher-priority work, loss of authorization, or dependent-subtask failure. The protocol is required to define explicit application-layer cancellation and interruption signaling, rather than rely on connection teardown. Cancellation is required to identify the affected scope, including a single invocation, delegated subtree, or dialog. Receiving agents are required to treat cancellation as idempotent and report whether execution stopped, had already completed, or could not be fully rolled back due to an irreversible action. In multi-hop deployments, interruption semantics are required to propagate predictably so that dependent subtasks do not continue after withdrawal of the parent task.
 
 ## Multiple Communication topologies {#topologies}
 
 Some agent interactions may use one-to-many or many-to-many communication among a group of agents whose membership may change during an exchange. The transport is required to support these delivery patterns and to handle agents joining or leaving the group while the exchange is active. An agent's authorization to participate is required to be verified when it joins, and the keying material is required to be updated whenever an agent joins or leaves, so that an agent can decrypt group traffic only while it is a member.
 
-# Session Continuity {#sessioncont}
+# Dialog Continuity {#sessioncont}
 
-Agent interactions are often long-lived, interruption-prone, and delegated across multiple hops. Each session is required to have a stable application-layer context identifier that survives reconnection, endpoint migration, and resumption. The transport mapping is required to let an authorized peer re-attach to an interrupted session and restore enough task context to continue without redoing completed work. Session continuity is thus defined above any TCP connection, QUIC connection, or TLS association. QUIC migration and TLS resumption help, but they preserve transport or cryptographic state, not the higher-layer task, delegation, and execution state autonomous agents require.
+Agent interactions are often long-lived, interruption-prone, and delegated across multiple hops. Each dialog is required to have a stable dialog identifier that survives reconnection and resumption. The transport mapping is required to let an authorized peer re-attach to an interrupted dialog. Dialog continuity is thus defined above any TCP connection, QUIC connection, or TLS association. QUIC migration and TLS resumption help, but they preserve transport or cryptographic state, not the dialog state that agents require.
 
-Context continuity is required to provide a persistent context identifier, a record of task progress that lets an authorized peer resume from the last completed step, and a means to verify context integrity. Connection-level continuity, which covers surviving path changes and re-establishing dropped connections, is provided by QUIC Connection ID and TLS resumption.
+Connection-level continuity, which covers surviving path changes and re-establishing dropped connections, is provided by QUIC Connection ID and TLS resumption.
 
 # Applicability of Existing IETF Work {#existingworks}
 ## Reuse As-Is
@@ -449,7 +423,7 @@ Context continuity is required to provide a persistent context identifier, a rec
 
 The following existing protocols may require profiling or extension; this list is expected to evolve as new IETF and OAuth WG specifications emerge:
 
-- The OAuth WG is actively discussing how existing and new mechanisms apply to AI agent authorization. {{I-D.ietf-oauth-identity-chaining}} addresses cross-domain authorization, and {{I-D.ietf-oauth-transaction-tokens}} addresses intra-domain token exchange between workloads. New proposals such as {{I-D.hardt-aauth-protocol}} are also under discussion. AIPF will track this work and profile the relevant outcomes once the OAuth WG reaches consensus.
+- The OAuth WG is actively discussing how existing and new mechanisms apply to AI agent authorization. {{I-D.ietf-oauth-identity-chaining}} addresses cross-domain authorization, and {{I-D.ietf-oauth-transaction-tokens}} addresses intra-domain token exchange between workloads. New proposals such as {{I-D.hardt-aauth-protocol}} are also under discussion. This document will track this work and profile the relevant outcomes once the OAuth WG reaches consensus.
 
 - MoQT (Media over QUIC Transport): acts as a unified transport substrate for distributed agent state synchronization and real-time multimodal communications. Work needs to happen to provide a common mapping of request-response and streaming patterns onto the pub/sub model of MoQT in order to enable interoperability across diverse agent ecosystems.
 
@@ -457,11 +431,12 @@ The following existing protocols may require profiling or extension; this list i
 
 ## New Protocol Work
 
-TBD
+The Agent Communication Protocol shown in {{fig-arch}} is new protocol work.
+It is expected to be specified separately.
 
 # Security Considerations {#secconsiderations}
 
-AI agents enlarge the attack surface: they act autonomously, delegate across administrative domains, and operate over long-lived sessions that accumulate sensitive task context and rely on long-standing delegated authority. This section highlights threats specific to the building blocks in this document; detailed mitigations are expected in the companion specifications.
+AI agents enlarge the attack surface: they act autonomously, delegate across administrative domains, and operate over long-lived dialogs that rely on long-standing delegated authority. This section highlights threats specific to the building blocks in this document; detailed mitigations are expected in the specifications of those building blocks.
 
 Delegated authority is the primary risk. A rogue or compromised agent may attempt to use delegated authority beyond the task it was granted, or to broaden it as it delegates onward. As required in {{intent-execution}} and {{delegation-chain}}, authority granted to an agent is scoped to the delegated task and cannot be broadened along the chain, and the delegation chain is verifiable at each hop so an intermediary cannot forge or escalate it.
 
@@ -469,7 +444,7 @@ Because agents exchange rich, potentially sensitive multimodal context, both mes
 
 # IANA Considerations {#ianaconsideration}
 
-TBD
+This document has no IANA actions.
 
 # Acknowledgments
 {: numbered="false"}
