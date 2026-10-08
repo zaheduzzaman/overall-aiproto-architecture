@@ -128,7 +128,7 @@ Dialog Context:
 : TBD.
 
 Dialog Identifier:
-: TBD.  
+: TBD.
 
 Intermediary:
 : An entity that relays or processes messages between dialog participants.
