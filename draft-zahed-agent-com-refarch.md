@@ -251,24 +251,37 @@ complete interaction in this use case proceeds as follows:
 
 ## Architecture Overview {#framework}
 
-{{fig-arch}} shows the architecture. The Agent Communication
-Protocol uses the Dialog, Authorization and Delegation, and Identity
-Management components. It runs over the Transport layer, which is protected
-by the Security layer.
+{{fig-arch}} shows the architecture. A task is initiated by an User,
+that invokes one or multiple agents. Each agent maintains a common
+dialog context that is correlated using a common identifier and may
+invoke also tool calls. The identifier is provide in-band with the
+transport protocol used between the agents for communication.
 
 ~~~
-+--------------------+                      +-------------------+
-|      User / App    |                      |    User / App     |
-+---------+----------+                      +----------+--------+
-          |                                            |
-          v                                            v
-+-----------------+     +-----------------+      +---------------+
-|     Agent (A)   |<--->|    Discovery    |<---> |   Agent (B)   |
-+---------+-------+     +-----------------+      +-------+-------+
-          |                                              |
-          +----------------------+-----------------------+
-                                 |
-                                 v
++--------------------+
+|      User / App    |
++---------+----------+ 
+          | Task                                           
+          v                                            
++----------------+     +----------------+     +----------------+
+|    Agent (A)   |<--->|   Agent (B)    |<--->|   Agent (C)    |
+|(Dialog Context)|  ID |(Dialog Context)| ID  |(Dialog Context)|
++----------------+     +-------+--------+     +--------+-------+
+                               |                       |
+                               v                       v
+                       +----------------+     +----------------+
+                       |     Tool       |     |      Tool      |
+                       +----------------+     +----------------+
+ ~~~
+{: #fig-arch title="Reference architecture with Dialog Context at each Agent and identifier exchange"}
+
+The Agent Communication Protocol maintains the Dialog among agents
+and also manages Authorization and Delegation as well as Identity
+Management components. It runs over the Transport layer, which is protected
+by the Security layer. The comments are shown in a functional stack
+in {{fig-stack}}.
+
+~~~
 +---------------------------------------------------------------+
 |                Agent Communication Protocol                   |
 |                                                               |
