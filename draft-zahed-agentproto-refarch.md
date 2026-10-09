@@ -42,7 +42,9 @@ normative:
 
 informative:
   RFC9261:
-  I-D.hardt-aauth-protocol:
+  RFC9334:
+  RFC9420:
+  RFC9711:
   I-D.agentic-ai-usecases-requirements:
   I-D.ietf-wimse-aims:
   I-D.ietf-oauth-identity-chaining:
@@ -122,13 +124,18 @@ Delegation:
   its behalf.
 
 Dialog:
-: TBD.
+: The correlated sequence of interactions between two or more participants
+  (users, agents, and tools) over the course of a task. A dialog may persist
+  across multiple individual message exchanges and network connections.
 
 Dialog Context:
-: TBD.
+: The identifiers and lifecycle state needed to correlate and maintain a
+  dialog. It does not include the content exchanged with AI models, such as
+  conversation memory, retrieved documents, or prompts.
 
 Dialog Identifier:
-: TBD.  
+: An identifier, carried in the dialog context, that correlates messages
+  with a dialog and survives network interruption or change.
 
 Intermediary:
 : An entity that relays or processes messages between dialog participants.
@@ -147,6 +154,9 @@ Orchestrator Agent:
 Task:
 : A unit of work submitted by a user to an AI agent, or delegated by one
   AI agent to another.
+
+Task Context:
+: The data that a participant maintains to execute a task.
 
 Tool:
 : A service invoked by an AI agent to retrieve data or perform operations.
@@ -257,16 +267,16 @@ Management components. It runs over the Transport layer, which is protected
 by the Security layer.
 
 ~~~
-+--------------------+                      +-------------------+
-|      User / App    |                      |    User / App     |
-+---------+----------+                      +----------+--------+
-          |                                            |
-          v                                            v
-+-----------------+     +-----------------+      +---------------+
-|     Agent (A)   |<--->|    Discovery    |<---> |   Agent (B)   |
-+---------+-------+     +-----------------+      +-------+-------+
-          |                                              |
-          +----------------------+-----------------------+
++-------------+                       +-------------+
+| User / App  |                       | User / App  |
++------+------+                       +------+------+
+       |                                     |
+       v                                     v
++-------------+     +- - - - - -+     +-------------+  +--------+
+|  Agent (A)  |<...>: Discovery :<...>|  Agent (B)  |  |  Tool  |
++------+------+     +- - - - - -+     +------+------+  +----+---+
+       |                                     |              |
+       +-------------------------+-----------+--------------+
                                  |
                                  v
 +---------------------------------------------------------------+
@@ -305,7 +315,7 @@ QUIC provides multiplexed streams with per-stream semantics suitable for the het
 
 OAuth 2.0 provides the authorization and delegation framework, enabling agents to obtain and present access tokens scoped to specific tasks. WIMSE provides workload identity for agents through a URI embedded in X.509 certificates at the TLS layer, and through Workload Identity Tokens (WIT) and WIMSE Proof Tokens (WPT) at the application layer. The Agent Communication Protocol maintains dialog continuity across connection changes using a stable dialog identifier. Connection-level continuity is provided by QUIC Connection ID and TLS resumption. Agents interact at the top of the stack, each acting on behalf of a user or system.
 
-Attestation, as defined in the SEAT WG, binds attestation evidence to agent communications. The evidence can be conveyed during the TLS handshake or at the application layer by extending {{RFC9261}}. Attestation is not shown as a discrete layer in {{fig-arch}} because its position in the stack is solution-specific. It is outside the scope of this document.
+Attestation, as defined in the SEAT WG, leverages the work of the RATS WG, including the RATS architecture {{RFC9334}} and Evidence formats such as the Entity Attestation Token (EAT) {{RFC9711}}, and binds attestation evidence to TLS. The evidence can be conveyed during the TLS handshake or at the application layer by extending {{RFC9261}}. Attestation is not shown as a discrete layer in {{fig-arch}} because its position in the stack is solution-specific. It is outside the scope of this document.
 
 # Discovery Aspects {#discovery}
 
@@ -346,9 +356,9 @@ this traceability is required to be cryptographically verifiable, so that
 no party can later deny its role. The mechanism for recording and
 verifying it is outside the scope of this document.
 
-# Transport protocols Aspects {#transport}
+# Transport Aspects {#transport}
 
-Transport for agent-to-agent communication spans several interdependent concerns: dialog continuity across long-running tasks, heterogeneous delivery semantics, explicit task and stream correlation, efficient movement of large context and data objects, signaling for priority and cancellation, structured error propagation, and negotiation of modalities and group communication topologies. The use cases and protocol requirements that motivate these transport properties are discussed in {{I-D.agentic-ai-usecases-requirements}}. The transport substrate is not required merely to deliver bytes between endpoints; it is required to preserve the correctness, efficiency, and recoverability of delegated agent execution across administrative domains and under changing network conditions.
+Transport for agent-to-agent communication spans several interdependent concerns: dialog continuity across long-running tasks, heterogeneous delivery semantics, explicit task and stream correlation, efficient transfer of large data, signaling for priority and cancellation, structured error propagation, and negotiation of modalities and group communication topologies. The use cases and protocol requirements that motivate these transport properties are discussed in {{I-D.agentic-ai-usecases-requirements}}. The transport substrate is not required merely to deliver bytes between endpoints; it is required to preserve the correctness, efficiency, and recoverability of delegated agent execution across administrative domains and under changing network conditions.
 
 ## Delivery Semantics {#delivery-semantics}
 
@@ -356,11 +366,14 @@ Agent communication requires heterogeneous transport semantics rather than a sin
 
 Agent communication patterns fall into three broad delivery semantic classes, each with distinct transport properties:
 
-Reliable ordered delivery: : Used for control messages, workflow state updates, authorization checkpoints, and structured results. The transport substrate is required to guarantee in-order, lossless delivery for these message classes, and is required to isolate them from other traffic classes to avoid head-of-line blocking.
+Reliable ordered delivery:
+: Used for control messages, workflow state updates, authorization checkpoints, and structured results. The transport substrate is required to guarantee in-order, lossless delivery for these message classes, and is required to isolate them from other traffic classes to avoid head-of-line blocking.
 
-Low-latency, loss-tolerant delivery: Used for real-time audio, video, and high-frequency sensor or telemetry streams. The transport substrate is required to minimize latency for these streams and is not required to guarantee delivery or ordering.
+Low-latency, loss-tolerant delivery:
+: Used for real-time audio, video, and high-frequency sensor or telemetry streams. The transport substrate is required to minimize latency for these streams and is not required to guarantee delivery or ordering.
 
-High-throughput reliable delivery: Used for large context payloads and model inputs and outputs. The transport substrate is required to support high-throughput reliable transfer with flow-control isolation from other traffic classes. Where in-band transfer is impractical, a secure, integrity-protected out-of-band transfer mechanism is required to be supported.
+High-throughput reliable delivery:
+: Used for bulk transfer of large data between dialog participants. The transport substrate is required to support high-throughput reliable transfer with flow-control isolation from other traffic classes.
 
 ## Message Exchange Patterns {#message-exchange}
 
@@ -384,13 +397,13 @@ Agent execution may be interrupted by user action, policy enforcement, higher-pr
 
 ## Multiple Communication topologies {#topologies}
 
-Some agent interactions may use one-to-many or many-to-many communication among a group of agents whose membership may change during an exchange. The transport is required to support these delivery patterns and to handle agents joining or leaving the group while the exchange is active. An agent's authorization to participate is required to be verified when it joins, and the keying material is required to be updated whenever an agent joins or leaves, so that an agent can decrypt group traffic only while it is a member.
+Some agent interactions may use one-to-many or many-to-many communication among a group of agents whose membership may change during an exchange. The transport is required to support these delivery patterns and to handle agents joining or leaving the group while the exchange is active. An agent's authorization to participate is required to be verified when it joins, and the keying material is required to be updated whenever an agent joins or leaves, so that an agent can decrypt group traffic only while it is a member. MLS {{RFC9420}} provides group key establishment with these properties.
 
 # Dialog Continuity {#sessioncont}
 
-Agent interactions are often long-lived, interruption-prone, and delegated across multiple hops. Each dialog is required to have a stable dialog identifier that survives reconnection and resumption. The transport mapping is required to let an authorized peer re-attach to an interrupted dialog. Dialog continuity is thus defined above any TCP connection, QUIC connection, or TLS association. QUIC migration and TLS resumption help, but they preserve transport or cryptographic state, not the dialog state that agents require.
+Agent interactions are often long-lived, interruption-prone, and delegated across multiple hops. Each dialog is required to have a dialog identifier that survives network interruption or change. If a transport connection is interrupted, an authorized agent uses the dialog identifier to re-associate with the existing dialog instead of restarting the task. An intermediary uses the dialog identifier to correlate the requests it receives with the requests it forwards. Neither function requires access to task context.
 
-Connection-level continuity, which covers surviving path changes and re-establishing dropped connections, is provided by QUIC Connection ID and TLS resumption.
+Dialog continuity is defined above any TCP connection, QUIC connection, or TLS association. QUIC Connection ID and TLS resumption provide connection-level continuity; they preserve transport and cryptographic state, not dialog context.
 
 # Applicability of Existing IETF Work {#existingworks}
 ## Reuse As-Is
@@ -407,11 +420,9 @@ Connection-level continuity, which covers surviving path changes and re-establis
 
 The following existing protocols may require profiling or extension; this list is expected to evolve as new IETF and OAuth WG specifications emerge:
 
-- The OAuth WG is actively discussing how existing and new mechanisms apply to AI agent authorization. {{I-D.ietf-oauth-identity-chaining}} addresses cross-domain authorization, and {{I-D.ietf-oauth-transaction-tokens}} addresses intra-domain token exchange between workloads. New proposals such as {{I-D.hardt-aauth-protocol}} are also under discussion. This document will track this work and profile the relevant outcomes once the OAuth WG reaches consensus.
+- The OAuth WG is actively discussing how existing and new mechanisms apply to AI agent authorization. {{I-D.ietf-oauth-identity-chaining}} addresses cross-domain authorization, and {{I-D.ietf-oauth-transaction-tokens}} addresses intra-domain token exchange between workloads. This document will track this work and profile the relevant outcomes once the OAuth WG reaches consensus.
 
 - MoQT (Media over QUIC Transport): acts as a unified transport substrate for distributed agent state synchronization and real-time multimodal communications. Work needs to happen to provide a common mapping of request-response and streaming patterns onto the pub/sub model of MoQT in order to enable interoperability across diverse agent ecosystems.
-
-- More TBD..
 
 ## New Protocol Work
 
@@ -424,7 +435,26 @@ AI agents enlarge the attack surface: they act autonomously, delegate across adm
 
 Delegated authority is the primary risk. A rogue or compromised agent may attempt to use delegated authority beyond the task it was granted, or to broaden it as it delegates onward. As required in {{intent-execution}} and {{delegation-chain}}, authority granted to an agent is scoped to the delegated task and cannot be broadened along the chain, and the delegation chain is verifiable at each hop so an intermediary cannot forge or escalate it.
 
-Because agents exchange rich, potentially sensitive multimodal context, both message content and metadata require protection. Even with content encrypted, analysis of message sizes, timing, and stream patterns can leak the nature of an agent's tasks; mitigations such as padding may be warranted where that exposure matters.
+Valid credentials do not show that an agent runs on an uncompromised platform. Attestation, as discussed in {{framework}}, allows a peer to assess the integrity of the agent's execution environment.
+
+QUIC and TLS 1.3 0-RTT data can be replayed by an attacker (Section 8 of {{RFC8446}}). Messages that trigger non-idempotent actions are not permitted in 0-RTT data.
+
+# Privacy Considerations {#privacy}
+
+Dialog identifiers and dialog context persist across intermediaries and
+trust boundaries. An intermediary or other observer can use them to link
+interactions that would otherwise be separate and to track agent and user
+activity over time. The Agent Communication Protocol is expected to analyze
+these risks and specify mitigations, such as limiting the scope and
+lifetime of dialog identifiers.
+
+Agent identity information is sensitive, particularly in multi-domain
+deployments. Persistent agent identifiers used across dialogs and domains
+enable tracking and correlation of agent activity. Pseudonymous or
+temporary identifiers reduce linkability while preserving the ability to
+audit and enforce accountability where required.
+
+Because agents exchange rich, potentially sensitive multimodal task context, both message content and metadata require protection. Even with content encrypted, analysis of message sizes, timing, and stream patterns can leak the nature of an agent's tasks; mitigations such as padding may be warranted where that exposure matters.
 
 # IANA Considerations {#ianaconsideration}
 
@@ -432,7 +462,5 @@ This document has no IANA actions.
 
 # Acknowledgments
 {: numbered="false"}
-
-The authors thank Kehan Yao for the discussion and comments.
 
 --- back
