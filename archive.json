@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-11T05:04:10.290825+00:00",
+  "timestamp": "2026-10-13T06:16:41.917368+00:00",
   "repo": "zaheduzzaman/overall-aiproto-architecture",
   "labels": [
     {
@@ -212,7 +212,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2026-10-09T12:45:04Z",
-      "updatedAt": "2026-10-09T12:45:13Z",
+      "updatedAt": "2026-10-12T10:23:21Z",
       "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
       "baseRefName": "main",
       "baseRefOid": "7bdd27d5fc28676e3d5538a36f66befa4ac676e4",
@@ -224,7 +224,48 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABRwXhyA",
+          "commit": {
+            "abbreviatedOid": "89b8513"
+          },
+          "author": "khyao78",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-12T04:24:15Z",
+          "updatedAt": "2026-10-12T04:26:20Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "Should \"Event\" be included into the dialog context? Event can trigger the lifecycle state to change, like \"cancel/revoke\", it could be a term to be defined and included into the dialog context that needs to be propagated. ",
+              "createdAt": "2026-10-12T04:24:15Z",
+              "updatedAt": "2026-10-12T04:26:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABRzHE3A",
+          "commit": {
+            "abbreviatedOid": "89b8513"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-12T10:23:20Z",
+          "updatedAt": "2026-10-12T10:23:21Z",
+          "comments": [
+            {
+              "originalPosition": 22,
+              "body": "The dialog context holds identifiers and lifecycle state. An event, such as terminate, changes that state; the dialog context records the result, not the event. We can define the term without adding it to the dialog context:\r\n\r\n  Lifecycle Event: An action that changes the lifecycle state of a\r\n  dialog, such as establishment, modification, resumption, or\r\n  termination.",
+              "createdAt": "2026-10-12T10:23:20Z",
+              "updatedAt": "2026-10-12T10:23:21Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
