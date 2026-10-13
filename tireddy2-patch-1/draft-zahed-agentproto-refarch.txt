@@ -5,13 +5,13 @@
 Network Working Group                                          Z. Sarker
 Internet-Draft                                                  T. Reddy
 Intended status: Informational                                     Nokia
-Expires: 12 April 2027                                            K. Yao
+Expires: 16 April 2027                                            K. Yao
                                                             China Mobile
                                                                   D. Liu
                                                            Alibaba Cloud
                                                              S. Krishnan
                                                                    Cisco
-                                                          9 October 2026
+                                                         13 October 2026
 
 
              Reference Architecture for Agent Communication
@@ -50,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 April 2027.
+   This Internet-Draft will expire on 16 April 2027.
 
 Copyright Notice
 
@@ -165,6 +165,9 @@ Table of Contents
 
    Intermediary:  An entity that relays or processes messages between
       dialog participants.
+
+   Lifecycle Event:  A change to the state of a dialog, such as its
+      establishment, modification, or termination.
 
    Message:  A discrete unit of communication exchanged between dialog
       participants.
@@ -320,7 +323,7 @@ Table of Contents
    |  - Multiplexed Streams                                        |
    |  - Per-stream Semantics                                       |
    |  - Connection continuity (Connection ID, TLS resumption)      |
-   |  - Protocol : QUIC, MoQT                                      |
+   |  - Protocols: HTTP, QUIC, WebTransport, WebRTC, MoQT          |
    +---------------------------------------------------------------+
                                     |
                                     v
@@ -722,9 +725,9 @@ Informative References
    [I-D.agentic-ai-usecases-requirements]
               Reddy.K, T., Sarker, Z., and K. Yao, "Agentic AI Use Cases
               and Requirements", Work in Progress, Internet-Draft,
-              draft-agentic-ai-usecases-requirements-02, 25 August 2026,
+              draft-agentic-ai-usecases-requirements-03, 9 October 2026,
               <https://datatracker.ietf.org/doc/html/draft-agentic-ai-
-              usecases-requirements-02>.
+              usecases-requirements-03>.
 
    [I-D.ietf-oauth-identity-chaining]
               Schwenkschuster, A., Kasselman, P., Burgin, K., Jenkins,
