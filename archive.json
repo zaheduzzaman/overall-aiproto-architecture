@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-13T06:16:41.917368+00:00",
+  "timestamp": "2026-10-15T04:00:29.506566+00:00",
   "repo": "zaheduzzaman/overall-aiproto-architecture",
   "labels": [
     {
@@ -160,7 +160,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2026-10-08T11:53:21Z",
-      "updatedAt": "2026-10-08T11:53:21Z",
+      "updatedAt": "2026-10-13T11:15:31Z",
       "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
       "baseRefName": "main",
       "baseRefOid": "6a22a41af734737767f443569a35a42d6a4fe907",
@@ -171,7 +171,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks Mirja. Splitting the figure into an architecture view and a protocol stack is a good improvement. \r\n\r\nComments below:\r\n\r\na) A common dialog identifier holds only within a trust domain. At a trust boundary, a gateway can originate a new dialog toward the other domain, as if it were the originator, and keep the mapping to the internal dialog private. The figure and text should reflect that.\r\nb) The identifier is part of the dialog context carried by the agent communication protocol, not by the transport. Saying \u201cin-band with the transport protocol\u201d mixes the two layers.\r\nc) Users and tools are also dialog participants, but the figure shows the dialog only between agents.\r\nd) #5 has been merged and reworks the same section. Please rebase on main.\r\n\r\nMinor: the second figure also uses #fig-arch; it should be #fig-stack.",
+          "createdAt": "2026-10-13T11:15:31Z",
+          "updatedAt": "2026-10-13T11:15:31Z"
+        }
+      ],
       "reviews": []
     },
     {
@@ -179,25 +187,33 @@
       "id": "PR_kwDOTu3Wf88AAAABHV3dgQ",
       "title": "remove whitespace to fix build",
       "url": "https://github.com/zaheduzzaman/overall-aiproto-architecture/pull/4",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "mirjak",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2026-10-08T13:38:20Z",
-      "updatedAt": "2026-10-08T13:38:20Z",
+      "updatedAt": "2026-10-13T11:16:42Z",
       "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
       "baseRefName": "main",
       "baseRefOid": "7bdd27d5fc28676e3d5538a36f66befa4ac676e4",
       "headRepository": "mirjak/overall-aiproto-architecture",
       "headRefName": "patch-2",
       "headRefOid": "aa5c5b1604c2d8ca87df2248f161da098ce37ece",
-      "closedAt": null,
+      "closedAt": "2026-10-13T11:16:41Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This is no longer needed: #5 replaced the Dialog Identifier placeholder, and main has no trailing whitespace. Closing it.",
+          "createdAt": "2026-10-13T11:16:41Z",
+          "updatedAt": "2026-10-13T11:16:41Z"
+        }
+      ],
       "reviews": []
     },
     {
@@ -205,24 +221,26 @@
       "id": "PR_kwDOTu3Wf88AAAABHiMSdA",
       "title": "Address comments and align with charter",
       "url": "https://github.com/zaheduzzaman/overall-aiproto-architecture/pull/5",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "tireddy2",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2026-10-09T12:45:04Z",
-      "updatedAt": "2026-10-12T10:23:21Z",
+      "updatedAt": "2026-10-13T09:55:27Z",
       "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
       "baseRefName": "main",
       "baseRefOid": "7bdd27d5fc28676e3d5538a36f66befa4ac676e4",
       "headRepository": "zaheduzzaman/overall-aiproto-architecture",
       "headRefName": "tireddy2-patch-1",
-      "headRefOid": "89b8513a46a756ee33d996b8c641c4f5f8f37399",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "5a5ff5619d21e2f276a85f8bc13a28bfe9139bcb",
+      "closedAt": "2026-10-13T09:55:27Z",
+      "mergedAt": "2026-10-13T09:55:27Z",
+      "mergedBy": "tireddy2",
+      "mergeCommit": {
+        "oid": "fa76eeb510dcdbd39ae577474390557a95c904ce"
+      },
       "comments": [],
       "reviews": [
         {
@@ -264,6 +282,32 @@
               "updatedAt": "2026-10-12T10:23:21Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABR90ZMQ",
+          "commit": {
+            "abbreviatedOid": "5a5ff56"
+          },
+          "author": "khyao78",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-13T08:14:13Z",
+          "updatedAt": "2026-10-13T08:14:13Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABR-VTWw",
+          "commit": {
+            "abbreviatedOid": "5a5ff56"
+          },
+          "author": "zaheduzzaman",
+          "authorAssociation": "OWNER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-13T09:02:08Z",
+          "updatedAt": "2026-10-13T09:02:08Z",
+          "comments": []
         }
       ]
     }
