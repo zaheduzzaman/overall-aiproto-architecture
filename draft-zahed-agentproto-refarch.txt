@@ -5,13 +5,13 @@
 Network Working Group                                          Z. Sarker
 Internet-Draft                                                  T. Reddy
 Intended status: Informational                                     Nokia
-Expires: 23 April 2027                                            K. Yao
+Expires: 24 April 2027                                            K. Yao
                                                             China Mobile
                                                                   D. Liu
                                                            Alibaba Cloud
                                                              S. Krishnan
                                                                    Cisco
-                                                         20 October 2026
+                                                         21 October 2026
 
 
              Reference Architecture for Agent Communication
@@ -50,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 April 2027.
+   This Internet-Draft will expire on 24 April 2027.
 
 Copyright Notice
 
