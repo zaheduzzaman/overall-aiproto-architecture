@@ -314,8 +314,8 @@ Flows:
    continues over a new transport connection. Authorization is checked again,
    because it can expire or be revoked while the dialog is suspended.
 
-8. Task Completion: Agent B returns the result to Agent A and eventually 
-   Agent A returns the complete result to the principal and retires the 
+8. Task Completion: Agent B returns the result to Agent A and eventually
+   Agent A returns the complete result to the principal and retires the
    dialogs context.
 
 ## Architecture Overview {#architecture}
