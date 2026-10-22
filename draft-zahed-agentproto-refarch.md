@@ -297,7 +297,7 @@ Flows:
 4. Connection Establishmend: Agent A establishes a transport connection
    toward Agent B, directly or through an intermediary. Where, if used,
    an intermediary terminates the connection, the connection between Agent A
-   and the intermediary and the connection between the intermediary and 
+   and the intermediary and the connection between the intermediary and
    Agent B are separate and are protected independently.
 
 5. Dialog Context: Agent A creates a dialog context for the current
