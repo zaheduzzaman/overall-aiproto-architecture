@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-20T04:16:13.972914+00:00",
+  "timestamp": "2026-10-22T04:05:28.385575+00:00",
   "repo": "zaheduzzaman/overall-aiproto-architecture",
   "labels": [
     {
@@ -49,7 +49,24 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 6,
+      "id": "I_kwDOTu3Wf88AAAABYxi-dg",
+      "title": "Should the dialog lifecycle be added in the architecture document?",
+      "url": "https://github.com/zaheduzzaman/overall-aiproto-architecture/issues/6",
+      "state": "OPEN",
+      "author": "zaheduzzaman",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "As terminology section defines dialog, context etc. It seems we could describe the dialog context lifecycle, however, this could be also described in the protocol document where the will be more discussions on the lifecycle states and interaction. ",
+      "createdAt": "2026-10-21T09:01:34Z",
+      "updatedAt": "2026-10-21T09:01:34Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": [
     {
       "number": 1,
