@@ -286,19 +286,20 @@ Following prerequisites are assumed to be fulfilled:
 Flows:
 
 1. Initiation: A pricipal starts intect with an Agent A. Agent A select
-   other agents if required.
+   other agents if required, in this case Agent B is discoverd and
+   selected.
 
-2. Authentication: Agent A and selected Agent B authenticate each other.
-
-3. Authorization: Agent A obtains authorization for each sub-task. The
-   authorization is derived from the principal's authorization and limited
-   to the sub-task.
-
-4. Connection Establishmend: Agent A establishes a transport connection
+2. Connection Establishmend: Agent A establishes a transport connection
    toward Agent B, directly or through an intermediary. Where, if used,
    an intermediary terminates the connection, the connection between Agent A
-   and the intermediary and the connection between the intermediary and
+   and the intermediary and the connection between the intermediary and 
    Agent B are separate and are protected independently.
+
+3. Authentication: Agent A and selected Agent B authenticate each other.
+
+4. Authorization: Agent A obtains authorization for each sub-task. The
+   authorization is derived from the principal's authorization and limited
+   to the sub-task.
 
 5. Dialog Context: Agent A creates a dialog context for the current
    dialog with Agent B. The dialog is assigned a dialog context
@@ -314,8 +315,8 @@ Flows:
    continues over a new transport connection. Authorization is checked again,
    because it can expire or be revoked while the dialog is suspended.
 
-8. Task Completion: Agent B returns the result to Agent A and eventually
-   Agent A returns the complete result to the principal and retires the
+8. Task Completion: Agent B returns the result to Agent A and eventually 
+   Agent A returns the complete result to the principal and retires the 
    dialogs context.
 
 ## Architecture Overview {#architecture}
