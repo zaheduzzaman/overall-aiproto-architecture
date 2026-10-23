@@ -292,7 +292,7 @@ Flows:
 2. Connection Establishmend: Agent A establishes a transport connection
    toward Agent B, directly or through an intermediary. Where, if used,
    an intermediary terminates the connection, the connection between Agent A
-   and the intermediary and the connection between the intermediary and 
+   and the intermediary and the connection between the intermediary and
    Agent B are separate and are protected independently.
 
 3. Authentication: Agent A and selected Agent B authenticate each other.
