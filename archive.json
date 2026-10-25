@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-22T04:05:28.385575+00:00",
+  "timestamp": "2026-10-25T04:02:12.146355+00:00",
   "repo": "zaheduzzaman/overall-aiproto-architecture",
   "labels": [
     {
@@ -62,9 +62,17 @@
       "labels": [],
       "body": "As terminology section defines dialog, context etc. It seems we could describe the dialog context lifecycle, however, this could be also described in the protocol document where the will be more discussions on the lifecycle states and interaction. ",
       "createdAt": "2026-10-21T09:01:34Z",
-      "updatedAt": "2026-10-21T09:01:34Z",
+      "updatedAt": "2026-10-22T12:21:40Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "zaheduzzaman",
+          "authorAssociation": "OWNER",
+          "body": "The thing is the dialog context lifecycle needs to be discussed to agree upon the states and transitions. We can now add the lifecycle into the architecture document now and start the discussion. Later we can decide whether it should be part of the architecture or part of the protocol specification. As the protocol specification would also benefit from the lifecycle discussion, waiting for the protocol discussion may just delay the discussion.",
+          "createdAt": "2026-10-22T12:21:39Z",
+          "updatedAt": "2026-10-22T12:21:39Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -325,6 +333,266 @@
           "createdAt": "2026-10-13T09:02:08Z",
           "updatedAt": "2026-10-13T09:02:08Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "PR_kwDOTu3Wf88AAAABKCT30g",
+      "title": "Operational flow to understand the architecture",
+      "url": "https://github.com/zaheduzzaman/overall-aiproto-architecture/pull/7",
+      "state": "OPEN",
+      "author": "zaheduzzaman",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-10-22T13:49:08Z",
+      "updatedAt": "2026-10-24T07:44:37Z",
+      "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
+      "baseRefName": "main",
+      "baseRefOid": "43fea67c513814f45e2da2384b484ba039a8cd27",
+      "headRepository": "zaheduzzaman/overall-aiproto-architecture",
+      "headRefName": "zaheduzzaman-patch-2",
+      "headRefOid": "d40525a93508fd4e3fb757a1b2762e7bf882c281",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABTrIqEQ",
+          "commit": {
+            "abbreviatedOid": "fdf8c44"
+          },
+          "author": "github-actions",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-22T13:49:31Z",
+          "updatedAt": "2026-10-22T13:49:32Z",
+          "comments": [
+            {
+              "originalPosition": 75,
+              "body": "````suggestion\n8. Task Completion: Agent B returns the result to Agent A and eventually\n   Agent A returns the complete result to the principal and retires the\n````",
+              "createdAt": "2026-10-22T13:49:31Z",
+              "updatedAt": "2026-10-22T13:49:32Z"
+            },
+            {
+              "originalPosition": 57,
+              "body": "````suggestion\n   and the intermediary and the connection between the intermediary and\n````",
+              "createdAt": "2026-10-22T13:49:32Z",
+              "updatedAt": "2026-10-22T13:49:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABTrJQtA",
+          "commit": {
+            "abbreviatedOid": "536c462"
+          },
+          "author": "github-actions",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-22T13:50:14Z",
+          "updatedAt": "2026-10-22T13:50:14Z",
+          "comments": [
+            {
+              "originalPosition": 57,
+              "body": "````suggestion\n   and the intermediary and the connection between the intermediary and\n````",
+              "createdAt": "2026-10-22T13:50:14Z",
+              "updatedAt": "2026-10-22T13:50:14Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABT2GYtA",
+          "commit": {
+            "abbreviatedOid": "a89d2f8"
+          },
+          "author": "github-actions",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-23T10:04:32Z",
+          "updatedAt": "2026-10-23T10:04:33Z",
+          "comments": [
+            {
+              "originalPosition": 52,
+              "body": "````suggestion\n   and the intermediary and the connection between the intermediary and\n````",
+              "createdAt": "2026-10-23T10:04:32Z",
+              "updatedAt": "2026-10-23T10:04:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUAL83w",
+          "commit": {
+            "abbreviatedOid": "d40525a"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-24T07:29:48Z",
+          "updatedAt": "2026-10-24T07:44:36Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "Architecture Overview should not be a subsection of Operational flow.\nI suggest moving it after Architecture Overview, since it refers to fig-arch. ",
+              "createdAt": "2026-10-24T07:29:48Z",
+              "updatedAt": "2026-10-24T07:44:36Z"
+            },
+            {
+              "originalPosition": 8,
+              "body": "```suggestion\ncontext is terminated.\n```",
+              "createdAt": "2026-10-24T07:33:06Z",
+              "updatedAt": "2026-10-24T07:44:36Z"
+            },
+            {
+              "originalPosition": 12,
+              "body": "Principal is already defined in Terminology. Suggest dropping this one.",
+              "createdAt": "2026-10-24T07:33:52Z",
+              "updatedAt": "2026-10-24T07:44:36Z"
+            },
+            {
+              "originalPosition": 45,
+              "body": "This contradicts the prerequisite that agents have already been discovered. Step 1 should only select.",
+              "createdAt": "2026-10-24T07:40:53Z",
+              "updatedAt": "2026-10-24T07:44:36Z"
+            },
+            {
+              "originalPosition": 55,
+              "body": "Authentication: Agent A and Agent B authenticate each other, at the transport layer, the application layer, or both.",
+              "createdAt": "2026-10-24T07:41:34Z",
+              "updatedAt": "2026-10-24T07:44:36Z"
+            },
+            {
+              "originalPosition": 68,
+              "body": "```suggestion\n   task to another agent, it repeats flow 2 to 5 toward that agent, possibly\n```",
+              "createdAt": "2026-10-24T07:43:25Z",
+              "updatedAt": "2026-10-24T07:44:36Z"
+            },
+            {
+              "originalPosition": 73,
+              "body": "```suggestion\n   because it can expire or be revoked while the dialog is interrupted.\n```",
+              "createdAt": "2026-10-24T07:44:18Z",
+              "updatedAt": "2026-10-24T07:44:37Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "PR_kwDOTu3Wf88AAAABKHtxlw",
+      "title": "Added Lifecycle states and transitions for the dialog context",
+      "url": "https://github.com/zaheduzzaman/overall-aiproto-architecture/pull/8",
+      "state": "OPEN",
+      "author": "zaheduzzaman",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "addresses #6 ",
+      "createdAt": "2026-10-22T21:08:31Z",
+      "updatedAt": "2026-10-24T08:01:56Z",
+      "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
+      "baseRefName": "main",
+      "baseRefOid": "43fea67c513814f45e2da2384b484ba039a8cd27",
+      "headRepository": "zaheduzzaman/overall-aiproto-architecture",
+      "headRefName": "zaheduzzaman-patch-3",
+      "headRefOid": "d01dea41460774d54cf1181a0baee1b8e32b7c5d",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABTyjITw",
+          "commit": {
+            "abbreviatedOid": "d01dea4"
+          },
+          "author": "khyao78",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-23T01:55:57Z",
+          "updatedAt": "2026-10-23T01:55:57Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "Maybe the state lifecycle of dialog context should belong to the dialog management protocol rather than the reference arch?",
+              "createdAt": "2026-10-23T01:55:57Z",
+              "updatedAt": "2026-10-23T01:55:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABT2Ehag",
+          "commit": {
+            "abbreviatedOid": "d01dea4"
+          },
+          "author": "zaheduzzaman",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-23T10:01:35Z",
+          "updatedAt": "2026-10-23T10:01:35Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "This is something we can discuss further. Of course the life cycle will play a role on the protocol and can be put in the protocol document. However, the idea of adding this to architecture is to start the discussion on the lifecycle earlier and if agreed move this to protocol document.",
+              "createdAt": "2026-10-23T10:01:35Z",
+              "updatedAt": "2026-10-23T10:01:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUAQWzA",
+          "commit": {
+            "abbreviatedOid": "d01dea4"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-24T07:55:39Z",
+          "updatedAt": "2026-10-24T08:01:56Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "```suggestion\n: A dialog stops exchanging messages while its dialog context is\n```",
+              "createdAt": "2026-10-24T07:55:40Z",
+              "updatedAt": "2026-10-24T08:01:56Z"
+            },
+            {
+              "originalPosition": 4,
+              "body": "a) Figure: MODIFY is missing. Add a self-loop on ACTIVE.\nb) Authorization check: It applies to every lifecycle event (CMN-12), not only RESUME. \nc) RETIRE: Cancelling a task does not end the dialog (CMN-11). please use \u201cterminate\u201d instead of \u201cretire\u201d, to match the requirements.",
+              "createdAt": "2026-10-24T07:59:07Z",
+              "updatedAt": "2026-10-24T08:01:56Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "\u201cBy agreement of the participants\u201d implies any participant can change the dialog. Lifecycle events should be made by an authorized participant (CMN-12).",
+              "createdAt": "2026-10-24T07:59:59Z",
+              "updatedAt": "2026-10-24T08:01:56Z"
+            },
+            {
+              "originalPosition": 36,
+              "body": "The dialog context does not carry authorization or delegation context. Modification covers participants, modalities, and lifetime (CMN-11).\n",
+              "createdAt": "2026-10-24T08:00:59Z",
+              "updatedAt": "2026-10-24T08:01:56Z"
+            },
+            {
+              "originalPosition": 45,
+              "body": "Being authenticated is not enough. The resuming party must be the participant whose exchange was interrupted, presenting the current dialog context (B1-7).",
+              "createdAt": "2026-10-24T08:01:49Z",
+              "updatedAt": "2026-10-24T08:01:56Z"
+            }
+          ]
         }
       ]
     }
