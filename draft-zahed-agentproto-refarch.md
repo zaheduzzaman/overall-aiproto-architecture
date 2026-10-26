@@ -391,7 +391,7 @@ MODIFY:
   authorization context is updated. The dialog context remains ACTIVE.
 
 SUSPEND:
-: An dialog stops exchanging messages while its dialog context is
+: A dialog stops exchanging messages while its dialog context is
   retained, for example after loss of the transport connection or by
   agreement of the participants.
 
