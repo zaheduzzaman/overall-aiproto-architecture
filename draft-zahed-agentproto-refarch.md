@@ -244,6 +244,81 @@ The architecture assumes that AI agents and tools can be discovered.
 Discovery is expected to be addressed by the DAWN WG and is outside the
 scope of this document.
 
+# Operational flow {#opflow}
+
+This section describes how the blocks in {{fig-arch}} take part in an
+interaction, from the creation of a dialog context until the dialog
+context retires.
+
+The flow involves the following participants:
+
+Principal:
+: The user or organization on whose behalf Agent A acts.
+
+Agent A:
+: The initiating and delegating agent.
+
+Agent B:
+: The delegated agent. It can be an AI agent or a tool.
+
+Intermediary:
+: Zero or more gateways, proxies, or protocol adapters between Agent A and
+  Agent B. An intermediary can terminate the transport connection, can act
+  as a policy enforcement point, or can only relay messages.
+
+Authorization service:
+: Stands for the authorization mechanisms of the Security block: issuing
+  tokens and acting as the authorization decision point. In an interaction
+  across administrative domains each domain has its own.
+
+Following prerequisites are assumed to be fulfilled:
+
+- AI agents and tools have been discovered. Discovery and selection are
+  outside the scope of this document.
+- Each agent has an agent identity with credentials bound to it.
+- Each administrative domain has its own authorization policy and
+  authorization decision point. Crossing a trust boundary does not transfer
+  policy authority, and the architecture assumes no global authorization
+  authority.
+- The principal has authorized Agent A to act on its behalf. How this is
+  done is outside the scope of this document.
+
+Flows:
+
+1. Initiation: A pricipal starts intect with an Agent A. Agent A select
+   other agents if required, in this case Agent B is discoverd and
+   selected.
+
+2. Connection Establishmend: Agent A establishes a transport connection
+   toward Agent B, directly or through an intermediary. Where, if used,
+   an intermediary terminates the connection, the connection between Agent A
+   and the intermediary and the connection between the intermediary and
+   Agent B are separate and are protected independently.
+
+3. Authentication: Agent A and Agent B authenticate each other, at the transport layer, the application layer, or both.
+
+4. Authorization: Agent A obtains authorization for each sub-task. The
+   authorization is derived from the principal's authorization and limited
+   to the sub-task.
+
+5. Dialog Context: Agent A creates a dialog context for the current
+   dialog with Agent B. The dialog is assigned a dialog context
+   identifier. Similarly a context is also created between the principal
+   and Agent A, not described here for brevity's sake.
+
+6. Task Execution: The AI agents exchange messages within the dialog. The
+   messages can carry multiple modalities. If Agent B delegates part of the
+   task to another agent, it repeats flow 1 to 5 toward that agent, possibly
+   in another administrative domain.
+
+7. Dialog Continuity: If a transport connection is interrupted, the dialog
+   continues over a new transport connection. Authorization is checked again,
+   because it can expire or be revoked while the dialog is suspended or interrupted.
+
+8. Task Completion: Agent B returns the result to Agent A and eventually 
+   Agent A returns the complete result to the principal and retires the 
+   dialogs context.
+
 ## Architecture Overview {#architecture}
 
 {{fig-arch}} shows the architecture. The Agent Communication
