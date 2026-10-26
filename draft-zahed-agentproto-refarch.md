@@ -354,6 +354,64 @@ A dialog can involve more than two participants, such as delegated agents,
 intermediaries, or members of a group. The dialog context identifier is therefore not
 required to imply a client-server relationship between participants.
 
+### Dialog Context Lifecycle {#dialog-lifecycle}
+
+A dialog context has an explicit lifecycle that is independent of transport
+connection state. {{fig-lifecycle}} shows the dialog states and the
+lifecycle events that move a dialog context between them.
+
+~~~
+               CREATE
+                  |
+                  v
+             +---------+    SUSPEND     +-----------+
+             |         |--------------->|           |
+             | ACTIVE  |                | SUSPENDED |
+             |         |<---------------|           |
+             +---------+     RESUME*    +-----------+
+               |                           |
+               | RETIRE                    | RETIRE
+               v                           v
+             +-------------------------------------+
+             |               RETIRED               |
+             +-------------------------------------+
+
+  * RESUME is subject to an authorization check.
+~~~
+{: #fig-lifecycle title="Dialog states and lifecycle events"}
+
+The lifecycle events are as follows:
+
+CREATE:
+: A dialog context is created and assigned a dialog context identifier. The dialog context is
+  ACTIVE.
+
+MODIFY:
+: The information associated with an ACTIVE dialog context changes, the delegation context or
+  authorization context is updated. The dialog context remains ACTIVE.
+
+SUSPEND:
+: A dialog stops exchanging messages while its dialog context is
+  retained, for example after loss of the transport connection or by
+  agreement of the participants.
+
+RESUME:
+: A SUSPENDED dialog context returns to ACTIVE, possibly over a different
+  transport connection, when an authenticated participant re-associates
+  with it using the dialog identifier. Resumption is subject to the
+  authorization check. The existence of a dialog context is not evidence that the authorization under which it was created
+  is still valid.
+
+RETIRE:
+: The dialog ends, whether the task completed, was cancelled, or the
+  dialog context expired. A RETIRED dialog context cannot be resumed, and its dialog context
+  identifier is not reused.
+
+An interruption of a transport connection is not itself a lifecycle event.
+It can lead a participant to SUSPEND the dialog, and the dialog can later
+be resumed. A lifecycle event that cannot be completed is reported to the
+requesting participant together with the reason.
+
 ### Dialog Continuity {#dialogcont}
 
 Agent interactions are often long-lived, interruption-prone, and delegated across multiple hops. Each dialog is required to have a dialog context identifier that survives network interruption or change. If a transport connection is interrupted, an authorized agent uses the dialog context identifier to re-associate with the existing dialog instead of restarting the task. An intermediary uses the dialog context identifier to correlate the requests it receives with the requests it forwards. Neither function requires access to task context.
