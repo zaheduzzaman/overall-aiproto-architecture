@@ -313,7 +313,7 @@ Flows:
 
 7. Dialog Continuity: If a transport connection is interrupted, the dialog
    continues over a new transport connection. Authorization is checked again,
-   because it can expire or be revoked while the dialog is suspended.
+   because it can expire or be revoked while the dialog is suspended or interrupted.
 
 8. Task Completion: Agent B returns the result to Agent A and eventually 
    Agent A returns the complete result to the principal and retires the 
