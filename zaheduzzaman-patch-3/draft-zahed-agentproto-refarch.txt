@@ -5,13 +5,13 @@
 Network Working Group                                          Z. Sarker
 Internet-Draft                                                  T. Reddy
 Intended status: Informational                                     Nokia
-Expires: 25 April 2027                                            K. Yao
+Expires: 29 April 2027                                            K. Yao
                                                             China Mobile
                                                                   D. Liu
                                                            Alibaba Cloud
                                                              S. Krishnan
                                                                    Cisco
-                                                         22 October 2026
+                                                         26 October 2026
 
 
              Reference Architecture for Agent Communication
@@ -50,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 April 2027.
+   This Internet-Draft will expire on 29 April 2027.
 
 Copyright Notice
 
@@ -470,9 +470,9 @@ Table of Contents
       changes, the delegation context or authorization context is
       updated.  The dialog context remains ACTIVE.
 
-   SUSPEND:  An dialog stops exchanging messages while its dialog
-      context is retained, for example after loss of the transport
-      connection or by agreement of the participants.
+   SUSPEND:  A dialog stops exchanging messages while its dialog context
+      is retained, for example after loss of the transport connection or
+      by agreement of the participants.
 
    RESUME:  A SUSPENDED dialog context returns to ACTIVE, possibly over
       a different transport connection, when an authenticated
