@@ -295,7 +295,7 @@ Flows:
    and the intermediary and the connection between the intermediary and
    Agent B are separate and are protected independently.
 
-3. Authentication: Agent A and selected Agent B authenticate each other.
+3. Authentication: Agent A and Agent B authenticate each other, at the transport layer, the application layer, or both.
 
 4. Authorization: Agent A obtains authorization for each sub-task. The
    authorization is derived from the principal's authorization and limited
