@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-25T04:02:12.146355+00:00",
+  "timestamp": "2026-10-27T04:26:10.102164+00:00",
   "repo": "zaheduzzaman/overall-aiproto-architecture",
   "labels": [
     {
@@ -73,6 +73,22 @@
           "updatedAt": "2026-10-22T12:21:39Z"
         }
       ]
+    },
+    {
+      "number": 9,
+      "id": "I_kwDOTu3Wf88AAAABaDxOFQ",
+      "title": "Need a section to explain correlation.",
+      "url": "https://github.com/zaheduzzaman/overall-aiproto-architecture/issues/9",
+      "state": "OPEN",
+      "author": "zaheduzzaman",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Agent proto talks about correlation so we would be benefited to have a section to explain what does that mean.",
+      "createdAt": "2026-10-26T16:23:16Z",
+      "updatedAt": "2026-10-26T16:23:16Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -348,13 +364,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2026-10-22T13:49:08Z",
-      "updatedAt": "2026-10-24T07:44:37Z",
+      "updatedAt": "2026-10-26T14:12:52Z",
       "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
       "baseRefName": "main",
       "baseRefOid": "43fea67c513814f45e2da2384b484ba039a8cd27",
       "headRepository": "zaheduzzaman/overall-aiproto-architecture",
       "headRefName": "zaheduzzaman-patch-2",
-      "headRefOid": "d40525a93508fd4e3fb757a1b2762e7bf882c281",
+      "headRefOid": "0a185cd11e28b8a35ec388c6778302524fbb7bd1",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -477,9 +493,109 @@
             },
             {
               "originalPosition": 73,
-              "body": "```suggestion\n   because it can expire or be revoked while the dialog is interrupted.\n```",
+              "body": "```suggestion\n   because it can expire or be revoked while the dialog is suspended or interrupted.\n```",
               "createdAt": "2026-10-24T07:44:18Z",
-              "updatedAt": "2026-10-24T07:44:37Z"
+              "updatedAt": "2026-10-26T14:12:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUPW7Ew",
+          "commit": {
+            "abbreviatedOid": "d40525a"
+          },
+          "author": "zaheduzzaman",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-26T14:06:56Z",
+          "updatedAt": "2026-10-26T14:06:56Z",
+          "comments": [
+            {
+              "originalPosition": 45,
+              "body": "Not sure.. what is you proposed text?",
+              "createdAt": "2026-10-26T14:06:56Z",
+              "updatedAt": "2026-10-26T14:06:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUPYKMg",
+          "commit": {
+            "abbreviatedOid": "d40525a"
+          },
+          "author": "zaheduzzaman",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-26T14:08:16Z",
+          "updatedAt": "2026-10-26T14:08:16Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "what is the reason for this change?",
+              "createdAt": "2026-10-26T14:08:16Z",
+              "updatedAt": "2026-10-26T14:08:16Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUPZaig",
+          "commit": {
+            "abbreviatedOid": "d40525a"
+          },
+          "author": "zaheduzzaman",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-26T14:09:36Z",
+          "updatedAt": "2026-10-26T14:09:36Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "Principal is part of participants , do you mean drop the description of it?",
+              "createdAt": "2026-10-26T14:09:36Z",
+              "updatedAt": "2026-10-26T14:09:37Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUPZ--w",
+          "commit": {
+            "abbreviatedOid": "d40525a"
+          },
+          "author": "zaheduzzaman",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-26T14:10:13Z",
+          "updatedAt": "2026-10-26T14:10:13Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "```suggestion\n3. Authentication: Agent A and Agent B authenticate each other, at the transport layer, the application layer, or both.\n```",
+              "createdAt": "2026-10-26T14:10:13Z",
+              "updatedAt": "2026-10-26T14:10:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUPblqA",
+          "commit": {
+            "abbreviatedOid": "2ec14cb"
+          },
+          "author": "zaheduzzaman",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-26T14:11:58Z",
+          "updatedAt": "2026-10-26T14:11:59Z",
+          "comments": [
+            {
+              "originalPosition": 68,
+              "body": "The selection is needed, right, then why skipping 1?",
+              "createdAt": "2026-10-26T14:11:58Z",
+              "updatedAt": "2026-10-26T14:11:59Z"
             }
           ]
         }
@@ -497,13 +613,13 @@
       "labels": [],
       "body": "addresses #6 ",
       "createdAt": "2026-10-22T21:08:31Z",
-      "updatedAt": "2026-10-24T08:01:56Z",
+      "updatedAt": "2026-10-26T14:14:52Z",
       "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
       "baseRefName": "main",
       "baseRefOid": "43fea67c513814f45e2da2384b484ba039a8cd27",
       "headRepository": "zaheduzzaman/overall-aiproto-architecture",
       "headRefName": "zaheduzzaman-patch-3",
-      "headRefOid": "d01dea41460774d54cf1181a0baee1b8e32b7c5d",
+      "headRefOid": "bf9c5d955f498486e0f43b44e6cf5593d73f4ba5",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -591,6 +707,46 @@
               "body": "Being authenticated is not enough. The resuming party must be the participant whose exchange was interrupted, presenting the current dialog context (B1-7).",
               "createdAt": "2026-10-24T08:01:49Z",
               "updatedAt": "2026-10-24T08:01:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUPdjSA",
+          "commit": {
+            "abbreviatedOid": "d01dea4"
+          },
+          "author": "zaheduzzaman",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-26T14:14:06Z",
+          "updatedAt": "2026-10-26T14:14:07Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "terminate vs retire , is this just words or they really mean different aspects?",
+              "createdAt": "2026-10-26T14:14:07Z",
+              "updatedAt": "2026-10-26T14:14:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUPeMgQ",
+          "commit": {
+            "abbreviatedOid": "bf9c5d9"
+          },
+          "author": "zaheduzzaman",
+          "authorAssociation": "OWNER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-26T14:14:51Z",
+          "updatedAt": "2026-10-26T14:14:52Z",
+          "comments": [
+            {
+              "originalPosition": 45,
+              "body": "do you have any text suggestion?",
+              "createdAt": "2026-10-26T14:14:51Z",
+              "updatedAt": "2026-10-26T14:14:52Z"
             }
           ]
         }
