@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-27T04:26:10.102164+00:00",
+  "timestamp": "2026-10-29T05:09:06.705287+00:00",
   "repo": "zaheduzzaman/overall-aiproto-architecture",
   "labels": [
     {
@@ -364,7 +364,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2026-10-22T13:49:08Z",
-      "updatedAt": "2026-10-26T14:12:52Z",
+      "updatedAt": "2026-10-27T05:31:36Z",
       "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
       "baseRefName": "main",
       "baseRefOid": "43fea67c513814f45e2da2384b484ba039a8cd27",
@@ -598,6 +598,66 @@
               "updatedAt": "2026-10-26T14:11:59Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUYRDTg",
+          "commit": {
+            "abbreviatedOid": "d40525a"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-27T05:24:11Z",
+          "updatedAt": "2026-10-27T05:24:11Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "The requirement draft uses \"terminated\"",
+              "createdAt": "2026-10-27T05:24:11Z",
+              "updatedAt": "2026-10-27T05:24:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUYR2Jg",
+          "commit": {
+            "abbreviatedOid": "d40525a"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-27T05:26:15Z",
+          "updatedAt": "2026-10-27T05:26:16Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "Principal is already defined in Terminology\r\n\r\nPrincipal:\r\n: As defined in {{terminology}}. Agent A acts on its behalf.",
+              "createdAt": "2026-10-27T05:26:15Z",
+              "updatedAt": "2026-10-27T05:28:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUYUX0Q",
+          "commit": {
+            "abbreviatedOid": "d40525a"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-27T05:31:36Z",
+          "updatedAt": "2026-10-27T05:31:36Z",
+          "comments": [
+            {
+              "originalPosition": 45,
+              "body": "1. Initiation: A principal starts interaction with an Agent A. Agent A select\r\n   other agents if required, in this case Agent B is selected.\r\n\r\nThe only change is dropping \u201cdiscoverd and\u201d.",
+              "createdAt": "2026-10-27T05:31:36Z",
+              "updatedAt": "2026-10-27T05:31:36Z"
+            }
+          ]
         }
       ]
     },
@@ -613,7 +673,7 @@
       "labels": [],
       "body": "addresses #6 ",
       "createdAt": "2026-10-22T21:08:31Z",
-      "updatedAt": "2026-10-26T14:14:52Z",
+      "updatedAt": "2026-10-27T05:22:50Z",
       "baseRepository": "zaheduzzaman/overall-aiproto-architecture",
       "baseRefName": "main",
       "baseRefOid": "43fea67c513814f45e2da2384b484ba039a8cd27",
@@ -747,6 +807,46 @@
               "body": "do you have any text suggestion?",
               "createdAt": "2026-10-26T14:14:51Z",
               "updatedAt": "2026-10-26T14:14:52Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUYLZ4Q",
+          "commit": {
+            "abbreviatedOid": "d01dea4"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-27T05:11:45Z",
+          "updatedAt": "2026-10-27T05:11:45Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "For consistency, I prefer to use \"terminate\". ",
+              "createdAt": "2026-10-27T05:11:45Z",
+              "updatedAt": "2026-10-27T05:11:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOTu3Wf88AAAABUYQcXw",
+          "commit": {
+            "abbreviatedOid": "d01dea4"
+          },
+          "author": "tireddy2",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-27T05:22:50Z",
+          "updatedAt": "2026-10-27T05:22:50Z",
+          "comments": [
+            {
+              "originalPosition": 45,
+              "body": "RESUME:\r\n: A SUSPENDED dialog context returns to ACTIVE, possibly over a different\r\n  transport connection, when the participant whose exchange was\r\n  interrupted re-associates with it using the dialog context identifier\r\n  and the current dialog context. Resumption is subject to the\r\n  authorization check. The existence of a dialog context is not evidence\r\n  that the authorization under which it was created is still valid.",
+              "createdAt": "2026-10-27T05:22:50Z",
+              "updatedAt": "2026-10-27T05:22:50Z"
             }
           ]
         }
